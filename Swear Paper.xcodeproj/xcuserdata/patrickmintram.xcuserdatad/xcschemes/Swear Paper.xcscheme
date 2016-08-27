@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D8800E941D721BC90009489D"
-               BuildableName = "Swear Paper"
+               BuildableName = "swear_paper"
                BlueprintName = "Swear Paper"
                ReferencedContainer = "container:Swear Paper.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D8800E941D721BC90009489D"
-            BuildableName = "Swear Paper"
+            BuildableName = "swear_paper"
             BlueprintName = "Swear Paper"
             ReferencedContainer = "container:Swear Paper.xcodeproj">
          </BuildableReference>
@@ -56,7 +56,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D8800E941D721BC90009489D"
-            BuildableName = "Swear Paper"
+            BuildableName = "swear_paper"
             BlueprintName = "Swear Paper"
             ReferencedContainer = "container:Swear Paper.xcodeproj">
          </BuildableReference>
@@ -75,7 +75,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D8800E941D721BC90009489D"
-            BuildableName = "Swear Paper"
+            BuildableName = "swear_paper"
             BlueprintName = "Swear Paper"
             ReferencedContainer = "container:Swear Paper.xcodeproj">
          </BuildableReference>
