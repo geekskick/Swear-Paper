@@ -27,7 +27,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		D8800E951D721BC90009489D /* Swear Paper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Swear Paper"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8800E951D721BC90009489D /* swear_paper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = swear_paper; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8800E9F1D721BD90009489D /* downloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = downloader.cpp; sourceTree = "<group>"; };
 		D8800EA01D721BD90009489D /* downloader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = downloader.hpp; sourceTree = "<group>"; };
 		D8800EA11D721BD90009489D /* earthporn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = earthporn.cpp; sourceTree = "<group>"; };
@@ -62,7 +62,7 @@
 		D8800E961D721BC90009489D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D8800E951D721BC90009489D /* Swear Paper */,
+				D8800E951D721BC90009489D /* swear_paper */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -98,7 +98,7 @@
 			);
 			name = "Swear Paper";
 			productName = "Swear Paper";
-			productReference = D8800E951D721BC90009489D /* Swear Paper */;
+			productReference = D8800E951D721BC90009489D /* swear_paper */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -267,14 +267,14 @@
 		D8800E9D1D721BC90009489D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = swear_paper;
 			};
 			name = Debug;
 		};
 		D8800E9E1D721BC90009489D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = swear_paper;
 			};
 			name = Release;
 		};
