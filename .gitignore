@@ -1,4 +1,4 @@
 *.xcodeproj/*
 *.xcscheme
 *.xcodeproj/
-.xcuserdata
+xcuserdata/
