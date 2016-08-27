@@ -28,7 +28,7 @@ int main(int argc, const char * argv[]) {
 	
 	// ---------- variables ---------
 	downloader d;								// a downloader
-	cv::Mat downloaded_image,					// place holder forthe downloaded image
+	cv::Mat downloaded_image,					// place holder for the downloaded image
 			text_image;							// The resized image with text on
 	reddit_interface *e = new earthporn();		// this object knows about the structure of the json reply and where to get it form
 	std::string result;							// the json returned as a string
@@ -39,7 +39,7 @@ int main(int argc, const char * argv[]) {
 	// ------- init --------
 	cv::namedWindow(window_name);				// make a window for the final display
 	
-	std::cout << "Getting sweatwords" << std::endl;
+	std::cout << "Getting swearwords" << std::endl;
 	full_list = d.performVector(SWEAR_URL);		// get the swear vector
 	
 	
