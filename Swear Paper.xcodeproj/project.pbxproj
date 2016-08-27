@@ -7,7 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D8800E991D721BC90009489D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8800E981D721BC90009489D /* main.cpp */; };
+		D8800EA41D721BD90009489D /* downloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8800E9F1D721BD90009489D /* downloader.cpp */; };
+		D8800EA51D721BD90009489D /* earthporn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8800EA11D721BD90009489D /* earthporn.cpp */; };
+		D8800EA61D721BD90009489D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8800EA31D721BD90009489D /* main.cpp */; };
+		D8800EA91D721C550009489D /* reddit_interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8800EA71D721C550009489D /* reddit_interface.cpp */; };
+		D8800EAB1D721DF50009489D /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D8800EAA1D721DF50009489D /* libcurl.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +28,14 @@
 
 /* Begin PBXFileReference section */
 		D8800E951D721BC90009489D /* Swear Paper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Swear Paper"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D8800E981D721BC90009489D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		D8800E9F1D721BD90009489D /* downloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = downloader.cpp; sourceTree = "<group>"; };
+		D8800EA01D721BD90009489D /* downloader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = downloader.hpp; sourceTree = "<group>"; };
+		D8800EA11D721BD90009489D /* earthporn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = earthporn.cpp; sourceTree = "<group>"; };
+		D8800EA21D721BD90009489D /* earthporn.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = earthporn.hpp; sourceTree = "<group>"; };
+		D8800EA31D721BD90009489D /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		D8800EA71D721C550009489D /* reddit_interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reddit_interface.cpp; sourceTree = "<group>"; };
+		D8800EA81D721C550009489D /* reddit_interface.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = reddit_interface.hpp; sourceTree = "<group>"; };
+		D8800EAA1D721DF50009489D /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D8800EAB1D721DF50009489D /* libcurl.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,6 +53,7 @@
 		D8800E8C1D721BC90009489D = {
 			isa = PBXGroup;
 			children = (
+				D8800EAA1D721DF50009489D /* libcurl.tbd */,
 				D8800E971D721BC90009489D /* Swear Paper */,
 				D8800E961D721BC90009489D /* Products */,
 			);
@@ -57,7 +70,13 @@
 		D8800E971D721BC90009489D /* Swear Paper */ = {
 			isa = PBXGroup;
 			children = (
-				D8800E981D721BC90009489D /* main.cpp */,
+				D8800E9F1D721BD90009489D /* downloader.cpp */,
+				D8800EA01D721BD90009489D /* downloader.hpp */,
+				D8800EA11D721BD90009489D /* earthporn.cpp */,
+				D8800EA21D721BD90009489D /* earthporn.hpp */,
+				D8800EA31D721BD90009489D /* main.cpp */,
+				D8800EA71D721C550009489D /* reddit_interface.cpp */,
+				D8800EA81D721C550009489D /* reddit_interface.hpp */,
 			);
 			path = "Swear Paper";
 			sourceTree = "<group>";
@@ -118,7 +137,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D8800E991D721BC90009489D /* main.cpp in Sources */,
+				D8800EA41D721BD90009489D /* downloader.cpp in Sources */,
+				D8800EA91D721C550009489D /* reddit_interface.cpp in Sources */,
+				D8800EA61D721BD90009489D /* main.cpp in Sources */,
+				D8800EA51D721BD90009489D /* earthporn.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
