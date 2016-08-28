@@ -8,49 +8,71 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/core.hpp>
 #include <random>
+#include <memory>
 
 #include "reddit_interface.hpp"
 #include "earthporn.hpp"
 #include "downloader.hpp"
 
 //---------- CONSTANTS ----------
+// there is a list of swear words at this address
 const std::string SWEAR_URL = "https://gist.githubusercontent.com/ryanlewis/a37739d710ccdb4b406d/raw/0fbd315eb2900bb736609ea894b9bde8217b991a/google_twunter_lol";
-const int WIDTH = 720;			// The resized image width in pix
-const int HEIGHT = 480;			// the resized image height in pix
-const int LINE_THICKNESS = 2;	// thickness of the lines used to write the text
+const int LINE_THICKNESS = 1;	// thickness of the lines used to write the text
+enum ARGS { EXEC_NAME, OUTPUT_NAME, COUNT }; // the arguments expected
 
 //--------- FUNCTION PROTOTYPES --------
+// Yay for inconsistent style! I would prefer these to be get_image etc, but
+// xcode doesnt allow for c++ refactoring like that and im lazy
 bool getImage(downloader &d, reddit_interface &e, cv::Mat &dst, std::string& fromJson);
 int getRandomNumber(int max);
 int getScaleFactor(int image_height);
-int getWordWidth(const std::string& word);
-int getWordHeight(const std::string& word);
-cv::Scalar getTextColour(const cv::Mat& downloaded_image, const std::string& word);
-
+int getWordWidth(const std::string& word, const int sf);
+int getWordHeight(const std::string& word, const int sf);
+cv::Scalar getTextColour(const cv::Mat& downloaded_image, const std::string& word, const int sf);
+void printUsage();
+int getWordXPos(const int image_w);
+int getWordYPos(const int image_h);
 //---------- MAIN -----------
 int main(int argc, const char * argv[]) {
 	
 	std::cout << "OpenCV Version: " << CV_VERSION << std::endl;
 	
+	// if the usage isn't as expected then let th user know how to
+	// use it, then exit the application.
+	// no need to delete objects etc as its not constructed yet.
+	if(argc != ARGS::COUNT){
+		printUsage();
+		exit(EXIT_FAILURE);
+	}
+	
 	// ---------- variables ---------
 	downloader d;								// a downloader
-	cv::Mat downloaded_image,					// place holder for the downloaded image
-			text_image;							// The image with text on
-	reddit_interface *e = new earthporn();		// this object knows about the structure of the json reply and where to get it form
-	std::string result;							// the json returned as a string
-	std::vector<std::string>	swearwords,		// the list which is in use throughout
-								full_list;		// the vector of swear words from google
-	const std::string window_name = "Output";	// the final window name
+	cv::Mat downloaded_image;					// place holder for the downloaded image
+	std::string result,							// the json returned as a string
+				word;							// the swear word
+	std::vector<std::string>	swearwords;		// the list which is in use throughout
+	bool swears_done = true;					// the swear words are populated when this is true
+	
+	// the interface needs to be a pointer to allow the strategy to work, so
+	// use a smart pointer so that i can pass it to functions, and not worry
+	// about safely exitting the application
+	std::shared_ptr<reddit_interface> e(new earthporn());
 	
 	// ------- init --------
-	cv::namedWindow(window_name);				// make a window for the final display
-	
 	std::cout << "Getting swearwords" << std::endl;
-	full_list = d.performVector(SWEAR_URL);		// get the swear vector
+	swearwords = d.performVector(SWEAR_URL);	// get the swears vector
+	
+	// If the swear words list isn't populated set the appropriate flag
+	if(swearwords.empty()){
+		std::cout << "Swear words not populated" << std::endl;
+		swears_done = false;
+	}
 	
 	// ------- main loop --------
-	while(1){
-		
+	
+	// If the swear words were downloaded then proceed to download the url
+	// from the subreddit, else no point in wasting user time so skip to tidyup section
+	if(swears_done){
 		std::cout << "Getting Json" << std::endl;
 		
 		try{
@@ -60,90 +82,99 @@ int main(int argc, const char * argv[]) {
 		catch(std::exception& e){
 			std::cout << e.what() << __LINE__ << std::endl;
 			
-			// if there was an error getting the json replay from reddit then stop doing img
+			// if there was an error getting the json reply from reddit then stop doing img
 			// processing and tidy stuff up
-			break;
-		}
-		
-		std::cout << "Getting Image" << std::endl;
-		
-		// If the image download was successful then do stuff, otherwise exit
-		if(getImage(d, *e, downloaded_image, result)){
-			
-			// all the swear words are used up so get the list again
-			if(swearwords.empty()){
-				swearwords = full_list;
-			}
-			
-			// get a new swear word and get rid of it from the list
-			// remember to prevent off by one errors
-			int n = getRandomNumber((int)swearwords.size() - 1);
-			std::string word = swearwords[n];
-			swearwords.erase(swearwords.begin() + n);
-			
-			std::cout <<  "Word is:\t" << word << std::endl;
-			
-			// in order to write to the same image but wiht a different word I need to preserve
-			// the original image, so make a copy in the text_image matrix
-			downloaded_image.copyTo(text_image);
-			
-			// the images height and width
-			int actual_h = downloaded_image.rows;
-			int actual_w = downloaded_image.cols;
-			
-			// the location on the screen the text is going to go
-			int x = actual_w/4;			// a quarter across
-			int y = (actual_h/4) * 3;	// three quarters down
-			
-			// put the swearword on the image
-			// near the bottom corner, in a white font with a fancy script looking font
-			// autosizing it to scale with the image
-			cv::putText(text_image, word, cv::Point(x, y), CV_FONT_HERSHEY_SCRIPT_COMPLEX, getScaleFactor(actual_h), getTextColour(downloaded_image, word), LINE_THICKNESS);
-			
-			std::cout << "Showing image" << std::endl;
-			
-			// show in a window and save the file so i can test both output formats
-			// resize first so that it's manageable, as most of the images are high quality
-			// although it's resized the text is put on the image first, so it still proves the
-			// scaling of the text to the original image height
-			// this make it difficult to read is the original image is really big, however its only for debugging
-			// so dw about it for now
-			// cv::resize(text_image, text_image, cv::Size(WIDTH, HEIGHT));
-			
-			cv::imshow(window_name, text_image);
-			cv::imwrite("/Users/Shared/Swear Paper/test.jpg", text_image);
-			
-			// wait 30secs or till a key is pressed to re-do it all
-			cv::waitKey(30000);
-			
-		}
-		else{
-			break;
+			exit(EXIT_FAILURE);
 		}
 	}
+	else{
+		exit(EXIT_FAILURE);
+	}
 	
-	// ------- clean up ------
-	cv::destroyWindow("Output");
-	delete e;
-	std::cout << "Exitting" << std::endl;
+	std::cout << "Getting Image" << std::endl;
 	
+	// If the image download was successful then do stuff,
+	if(getImage(d, *e, downloaded_image, result)){
+		
+		// get a new swear word and get rid of it from the list
+		// remember to prevent off by one errors
+		int n = getRandomNumber((int)swearwords.size() - 1);
+		word = swearwords[n];
+
+		std::cout <<  "Word is:\t" << word << std::endl;
+		
+		// get the image size
+		int actual_h = downloaded_image.rows;
+		int actual_w = downloaded_image.cols;
+		
+		// the location on the screen the text is going to go
+		int text_x = getWordXPos(actual_w);		// a quarter across
+		int text_y = getWordYPos(actual_h);		// three quarters down
+		int sf = getScaleFactor(actual_h);
+		
+		cv::putText(downloaded_image,								// on the downloaded image
+					word,											// the swear word
+					cv::Point(text_x, text_y),						// it's topleft location
+					CV_FONT_HERSHEY_SCRIPT_COMPLEX,					// a scrolly font
+					sf,												// scale factor
+					getTextColour(downloaded_image, word, sf),		// colour
+					LINE_THICKNESS);								// thickness
+		
+		// construct the filename inclusing extension
+		std::string filename(argv[ARGS::OUTPUT_NAME]);
+		filename += ".jpg";
+		
+		std::cout << "Saving image to " << filename << std::endl;
+		
+		// save the image in the current folder
+		cv::imwrite(filename, downloaded_image);
+		
+	}
+
+	
+	// ------- tidy up ------
+	// no need to do anything to delete object etc
+	// as i have used a smart pointer for it - arent i clever!
+	// Still important to tell the user that it's done though
+	std::cout << "Done, you " << word << std::endl;
+	
+}
+
+//----------------------
+// the word is going to go about a
+// quarter of the way across the image
+int getWordXPos(const int image_w){
+	return image_w/4;
+}
+
+//----------------------
+// the word is going to go about 3/4 of
+// the way down the image
+int getWordYPos(const int image_h){
+	return (image_h/4)*3;
+}
+
+//----------------------
+// Print the program usage
+void printUsage(){
+	std::cout << "Usage: ./swear_paper <output file name>" << std::endl;
 }
 
 //----------------------
 // Looks at the area where the text is going to go and returns the
 // colour code for black of white, depending on whether the area is lighter or darker
-cv::Scalar getTextColour(const cv::Mat& downloaded_image, const std::string& word){
+cv::Scalar getTextColour(const cv::Mat& downloaded_image, const std::string& word, const int sf){
 	
 	// the images' height and width
 	int actual_h = downloaded_image.rows;
 	int actual_w = downloaded_image.cols;
 	
 	// the location on the screen the text is going to go
-	int x = actual_w/4;			// a quarter across
-	int y = (actual_h/4) * 3;	// three quarters down
+	int x = getWordXPos(actual_w);		// a quarter across
+	int y = getWordYPos(actual_h);	// three quarters down
 	
-	int word_w = getWordWidth(word);
-	int word_h = getWordHeight(word);
+	int word_w = getWordWidth(word, sf);
+	int word_h = getWordHeight(word, sf);
 	
 	// Create a rectanlge big enough for the word and at the same x and y co-ords as it
 	cv::Rect r(x, y, word_w, word_h);
@@ -167,20 +198,22 @@ cv::Scalar getTextColour(const cv::Mat& downloaded_image, const std::string& wor
 	// stand out. similarly if more white i want the text to be black
 	bool text_is_black = numwhite > numBlack;
 	
+	std::cout << "Text is " << (text_is_black ? "black" : "white") << std::endl;
+	
 	// return the rgb values for white or black
 	return text_is_black ? cv::Scalar(0, 0, 0) : cv::Scalar(255, 255, 255);
 }
 
 //----------------------
 // Gets the word's width in pixels
-int getWordWidth(const std::string& word){
-	return cv::getTextSize(word, CV_FONT_HERSHEY_SCRIPT_COMPLEX, 1, LINE_THICKNESS, nullptr).width;
+int getWordWidth(const std::string& word, const int sf){
+	return cv::getTextSize(word, CV_FONT_HERSHEY_SCRIPT_COMPLEX, sf, LINE_THICKNESS, nullptr).width;
 }
 
 //----------------------
 // Gets the word height in pixels
-int getWordHeight(const std::string& word){
-	return cv::getTextSize(word, CV_FONT_HERSHEY_SCRIPT_COMPLEX, 1, LINE_THICKNESS, nullptr).height;
+int getWordHeight(const std::string& word, const int sf){
+	return cv::getTextSize(word, CV_FONT_HERSHEY_SCRIPT_COMPLEX, sf, LINE_THICKNESS, nullptr).height;
 }
 
 //--------------------
@@ -225,8 +258,8 @@ int getScaleFactor(int image_height){
 	
 	// default line thickness is 1, as is the scale factor, dont need a base point so nullptr
 	// F is a tall letter so if F will fit then the rest will
-	int text_height = getWordHeight("f");
-	return double(image_height/20.0)/double(text_height);
+	int text_height = getWordHeight("f", 1);
+	return double(image_height/10.0)/double(text_height);
 }
 
 //----------------------
