@@ -10,5 +10,7 @@ A command line application to generate a new desktop wallpaper, using the newest
 ##Results
 ![alt text](Results/assfukka.jpg "assfukka")
 ![alt text](Results/cunts.jpg "cunts")
-![alt text](Results/buceta.jpg "buceta")
+![alt text](Results/fekker.jpg "fekker")
+![alt text](Results/fagging.jpg "fagging")
+![alt text](Results/motherfuckers.jpg "motherfuckers")
 
