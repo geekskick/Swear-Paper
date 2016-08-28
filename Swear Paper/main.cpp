@@ -17,7 +17,7 @@
 //---------- CONSTANTS ----------
 // there is a list of swear words at this address
 const std::string SWEAR_URL = "https://gist.githubusercontent.com/ryanlewis/a37739d710ccdb4b406d/raw/0fbd315eb2900bb736609ea894b9bde8217b991a/google_twunter_lol";
-const int LINE_THICKNESS = 1;	// thickness of the lines used to write the text
+const int LINE_THICKNESS = 2;	// thickness of the lines used to write the text
 enum ARGS { EXEC_NAME, OUTPUT_NAME, COUNT }; // the arguments expected
 
 //--------- FUNCTION PROTOTYPES --------
@@ -96,21 +96,38 @@ int main(int argc, const char * argv[]) {
 	// If the image download was successful then do stuff,
 	if(getImage(d, *e, downloaded_image, result)){
 		
-		// get a new swear word and get rid of it from the list
-		// remember to prevent off by one errors
-		int n = getRandomNumber((int)swearwords.size() - 1);
-		word = swearwords[n];
-
-		std::cout <<  "Word is:\t" << word << std::endl;
-		
 		// get the image size
 		int actual_h = downloaded_image.rows;
 		int actual_w = downloaded_image.cols;
 		
-		// the location on the screen the text is going to go
-		int text_x = getWordXPos(actual_w);		// a quarter across
-		int text_y = getWordYPos(actual_h);		// three quarters down
-		int sf = getScaleFactor(actual_h);
+		int text_x;	// the text topleft x coord
+		int text_y;	// the text topleft y coord
+		int sf;		// the test scalefactor to make it fit on the image
+		
+		int width_limit;	// the last part of the word across the image
+		int height_limit;	// the last part of the word down the image
+		
+		do {
+			// get a new swear word and get rid of it from the list
+			// remember to prevent off by one errors
+			int n = getRandomNumber((int)swearwords.size() - 1);
+			word = swearwords[n];
+			
+			// remove it from the list so that it doesnt get selected again if it's too big
+			swearwords.erase(swearwords.begin() + n);
+			
+			std::cout <<  "Word is:\t" << word << std::endl;
+			
+			// the location on the screen the text is going to go
+			text_x = getWordXPos(actual_w);		// a quarter across
+			text_y = getWordYPos(actual_h);		// three quarters down
+			
+			sf = getScaleFactor(actual_h);
+			
+			height_limit = getWordYPos(actual_h) + getWordHeight(word, sf);
+			width_limit = (getWordXPos(actual_w) + getWordWidth(word, sf));
+		} while ( height_limit >= actual_h ||	// make sure that the word fits on the height of the image
+				 width_limit > actual_w);		// makesure that the word fits on the width of the image (the more likely one to fail)!
 		
 		cv::putText(downloaded_image,								// on the downloaded image
 					word,											// the swear word
@@ -185,9 +202,15 @@ cv::Scalar getTextColour(const cv::Mat& downloaded_image, const std::string& wor
 	
 	// convert to grey and threshold, this will turn the lightest pixels white and the darker ones black
 	cv::cvtColor(roi, grey, CV_BGR2GRAY);
+	cv::imshow("roi", roi);
+	cv::imshow("grey", grey);
 	
-	//anything brighter than half will clip to 1, and anything less than hald will fall to 0
-	threshold(grey, grey, 128, 255, cv::THRESH_BINARY);
+	// anything brighter than half will remain the same, and anything less than 128 will fall to 0
+	// this part is the bit which is abit dodgy.
+	threshold(grey, grey, 128, 255, cv::THRESH_TOZERO);
+	cv::imshow("thres", grey);
+	
+	cv::waitKey();
 	
 	// Get the number of pixels in the rectanlge, then a count of this fully off and those fully on
 	int numwhite = cv::countNonZero(grey);
@@ -259,7 +282,7 @@ int getScaleFactor(int image_height){
 	// default line thickness is 1, as is the scale factor, dont need a base point so nullptr
 	// F is a tall letter so if F will fit then the rest will
 	int text_height = getWordHeight("f", 1);
-	return double(image_height/10.0)/double(text_height);
+	return double(image_height/20.0)/double(text_height);
 }
 
 //----------------------
