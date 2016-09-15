@@ -21,7 +21,7 @@ public:
 private:
 	std::string m_previous_url;
 	// thi url gets the posts from earthporn in json formatted with the newest at the top
-	const std::string m_url = "http://www.reddit.com/r/earthporn/new.json?sort=new";
+	const std::string m_url = "https://www.reddit.com/r/earthporn/new.json?sort=new";
 };
 
 

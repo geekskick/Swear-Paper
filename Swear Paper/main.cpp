@@ -51,7 +51,8 @@ int main(int argc, const char * argv[]) {
 	std::string result,							// the json returned as a string
 				word;							// the swear word
 	std::vector<std::string>	swearwords;		// the list which is in use throughout
-	bool swears_done = true;					// the swear words are populated when this is true
+	bool swears_done = true,					// the swear words are populated when this is true
+		all_done = false;						// the image is made
 	
 	// the interface needs to be a pointer to allow the strategy to work, so
 	// use a smart pointer so that i can pass it to functions, and not worry
@@ -145,6 +146,7 @@ int main(int argc, const char * argv[]) {
 		
 		// save the image in the current folder
 		cv::imwrite(filename, downloaded_image);
+		all_done = true;
 		
 	}
 
@@ -153,7 +155,12 @@ int main(int argc, const char * argv[]) {
 	// no need to do anything to delete object etc
 	// as i have used a smart pointer for it - arent i clever!
 	// Still important to tell the user that it's done though
+	if(all_done){
 	std::cout << "Done, you " << word << std::endl;
+	}
+	else{
+		std::cout << "Not done" << std::endl;
+	}
 	
 }
 
@@ -202,15 +209,15 @@ cv::Scalar getTextColour(const cv::Mat& downloaded_image, const std::string& wor
 	
 	// convert to grey and threshold, this will turn the lightest pixels white and the darker ones black
 	cv::cvtColor(roi, grey, CV_BGR2GRAY);
-	cv::imshow("roi", roi);
-	cv::imshow("grey", grey);
+	//cv::imshow("roi", roi);
+	//cv::imshow("grey", grey);
 	
 	// anything brighter than half will remain the same, and anything less than 128 will fall to 0
 	// this part is the bit which is abit dodgy.
 	threshold(grey, grey, 128, 255, cv::THRESH_TOZERO);
-	cv::imshow("thres", grey);
+	//cv::imshow("thres", grey);
 	
-	cv::waitKey();
+	//cv::waitKey();
 	
 	// Get the number of pixels in the rectanlge, then a count of this fully off and those fully on
 	int numwhite = cv::countNonZero(grey);
@@ -264,7 +271,7 @@ bool getImage(downloader &d, reddit_interface &e, cv::Mat &dst, std::string& fro
 		success = true;
 	}
 	catch(std::exception& e){
-		std::cout << e.what() << __LINE__ << std::endl;
+		std::cout << e.what() << "\tline: " << __LINE__ << std::endl;
 	}
 	
 	return success;
