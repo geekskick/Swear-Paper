@@ -16,7 +16,7 @@
 
 //---------- CONSTANTS ----------
 // there is a list of swear words at this address
-const std::string SWEAR_URL = "https://gist.githubusercontent.com/ryanlewis/a37739d710ccdb4b406d/raw/0fbd315eb2900bb736609ea894b9bde8217b991a/google_twunter_lol";
+const std::string SWEAR_URL = "https://raw.githubusercontent.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en";
 const int LINE_THICKNESS = 2;	// thickness of the lines used to write the text
 enum ARGS { EXEC_NAME, OUTPUT_NAME, COUNT }; // the arguments expected
 
