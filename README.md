@@ -3,6 +3,20 @@ Wallpaper Generation
 
 A command line application to generate a new desktop wallpaper, using the newest post to /r/earthporn and google's naughty word list.
 
+## Building
+
+When in the directory containing the xcode project file (if thats what you're using):
+
+```bash
+xcodebuild build
+```
+
+OR
+
+```bash
+g++ main.cpp image.cpp reddit_interface.cpp earthporn.cpp downloader.cpp -o test_swear_paper -std=c++14 -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -L/usr/lib -lcurl
+```
+
 ## Usage
 
 ./swear_paper \<outputfilename>
