@@ -84,6 +84,7 @@ int main(int argc, const char * argv[]) {
 	if(get_image(d, *e, raw_image, result)){
 		
 		downloaded_image = image(raw_image);
+		std::cout << "The image size is " << downloaded_image.size().w << "x" << downloaded_image.size().h <<std::endl; 
 		do {
 			// remember to prevent off by one errors
 			int n = get_random_number((int)swearwords.size() - 1);

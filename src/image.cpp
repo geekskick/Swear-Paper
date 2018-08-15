@@ -13,14 +13,16 @@ image::image(void){
 }
 
 image::image(image& rhs){
-	this->m_image = {rhs.m_image};
-	this->m_line_thickness = {rhs.m_line_thickness};
-	this->m_font = {rhs.m_font};
+	this->m_image = rhs.m_image ;
+	this->m_line_thickness = rhs.m_line_thickness ;
+	this->m_font = rhs.m_font ;
 }
+
 image::image(std::vector<char> & from){
 	m_image = cv::imdecode(from, -1);
 	init();
 }
+
 void image::put_text(const std::string& word){
 	auto word_loc = word_location();
 	cv::putText(m_image,
@@ -41,11 +43,15 @@ bool image::word_fits(const std::string& word){
 	return total_sz.w < m_image.cols && total_sz.h < m_image.rows;
 }
 
+struct size image::size(void){
+	return { m_image.cols, m_image.rows };
+}
+
 cv::Scalar image::text_colour(const std::string& word){
 	
 	// the location on the screen the text is going to go
-	struct location word_loc = word_location();
-	struct size word_size = text_size(word);
+	struct location word_loc { word_location() };
+	struct size word_size { text_size(word) };
 	
 	// Create a rectanlge big enough for the word and at the same x and y co-ords as it
 	cv::Rect r(word_loc.x, word_loc.y, word_size.w, word_size.h);

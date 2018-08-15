@@ -28,6 +28,7 @@ public:
 	void put_text(const std::string& word);
 	void save_to_file(const std::string& filename);
 	bool word_fits(const std::string& word);
+	struct size size(void);
 private:
 	cv::Scalar text_colour(const std::string& word);
 	int scale_factor(void);
