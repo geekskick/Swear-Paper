@@ -8,20 +8,14 @@
 #include <memory>
 #include <string>
 
+#include <boost/program_options.hpp>
+
 #include "reddit_interface.hpp"
 #include "earthporn.hpp"
 #include "downloader.hpp"
 #include "image.hpp"
 
-//---------- CONSTANTS ----------
-// there is a list of swear words at this address
-const std::string SWEAR_URL = "https://raw.githubusercontent.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en";
-
-enum class args {
-	EXEC_NAME = 0,
-	OUTPUT_NAME = 1,
-	COUNT = 2
-};
+namespace po = boost::program_options;
 
 //--------- FREE FUNCTION PROTOTYPES --------
 bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst, std::string& fromJson);
@@ -30,13 +24,38 @@ void print_usage(void);
 
 //---------- MAIN -----------
 int main(int argc, const char * argv[]) {
+
+	std::string swear_url { "https://raw.githubusercontent.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en" };
+	std::string filename { "default" };
 	
 	std::cout << "OpenCV Version: " << CV_VERSION << std::endl;
-	
-	if(argc != static_cast<int>(args::COUNT)){
-		print_usage();
-		exit(EXIT_FAILURE);
+
+	po::options_description desc("Allowed Options");
+	desc.add_options()
+		("help", "Display help message")
+		("swears", po::value<std::string>(), "Specify the location of the swear word list")
+		("output", po::value<std::string>(), "Output filename")
+	;
+
+	po::variables_map vm;
+	po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::notify(vm);
+
+	if(vm.count("help")){
+		std::cout << desc << std::endl;
+		exit(EXIT_SUCCESS);
 	}
+
+	if(vm.count("swears")){
+		swear_url = vm["swears"].as<std::string>();
+	}
+	
+	if(vm.count("output")){
+		filename = vm["output"].as<std::string>();
+		std::cout << "Outputting to " << filename << std::endl;
+	}
+
+	std::cout << "Using " << swear_url << " as the source" << std::endl;
 	
 	downloader 					d;						// a downloader
 	std::string 				result;					// the json returned as a string
@@ -48,32 +67,37 @@ int main(int argc, const char * argv[]) {
 	std::shared_ptr<reddit_interface> e(new earthporn());
 	
 	std::cout << "Getting swearwords" << std::endl;
-	swearwords = d.performVector(SWEAR_URL);
-	
+	auto list = d.perform_vector(swear_url, swearwords);
+
+	if(!list.first){
+		std::cerr << list.second << std::endl;
+		exit(EXIT_SUCCESS);
+	}
+
 	// If the swear words list isn't populated set the appropriate flag
 	if(swearwords.empty()){
-		std::cout << "Swear words not populated" << std::endl;
-		swears_done = false;
+		std::cerr << "Swear words not populated" << std::endl;
+		exit(EXIT_FAILURE);
 	}
 	
 	// If the swear words were downloaded then proceed to download the url
 	// from the subreddit, else no point in wasting user time so skip to tidyup section
-	if(swears_done){
-		std::cout << "Getting Json" << std::endl;
-		
-		try{
-			// get the json as a string
-			result = d.performString(e->get_sub_reddit_url());
-		}
-		catch(std::exception& e){
-			std::cout << e.what() << __LINE__ << std::endl;
-			
-			// if there was an error getting the json reply from reddit then stop doing img
-			// processing and tidy stuff up
+	std::cout << "Getting Json" << std::endl;
+	
+	//------------------------------------------------
+	try{
+		// get the json as a string
+		auto rc = d.perform_string(e->get_sub_reddit_url(), result);
+		if(!rc.first){
+			std::cerr << rc.second << std::endl;
 			exit(EXIT_FAILURE);
 		}
 	}
-	else{
+	catch(std::exception& e){
+		std::cerr << e.what() << __LINE__ << std::endl;
+		
+		// if there was an error getting the json reply from reddit then stop doing img
+		// processing
 		exit(EXIT_FAILURE);
 	}
 	
@@ -85,6 +109,7 @@ int main(int argc, const char * argv[]) {
 		
 		downloaded_image = image(raw_image);
 		std::cout << "The image size is " << downloaded_image.size().w << "x" << downloaded_image.size().h <<std::endl; 
+		
 		do {
 			// remember to prevent off by one errors
 			int n = get_random_number((int)swearwords.size() - 1);
@@ -98,35 +123,29 @@ int main(int argc, const char * argv[]) {
 		
 		if(swearwords.size() == 0){
 			std::cout << "No more swear words left to try and fit on" << std::endl;
-		}
-		else{
-			downloaded_image.put_text(word);
-			
-			// construct the filename including extension
-			std::string filename(argv[static_cast<int>(args::OUTPUT_NAME)]);
-			filename += ".jpg";
-			
-			std::cout << "Saving image to " << filename << std::endl;
-			
-			downloaded_image.save_to_file(filename);
-			all_done = true;
+			exit(EXIT_SUCCESS);
 		}
 		
-	}
-
-	if(all_done){
+		downloaded_image.put_text(word);
+		
+		// construct the filename including extension
+		if(0 >= vm.count("output")){
+			filename = word;
+		}
+		filename += ".jpg";
+		
+		std::cout << "Saving image to " << filename << std::endl;
+		
+		downloaded_image.save_to_file(filename);
 		std::cout << "Done, you " << word << std::endl;
+
+		
+		
 	}
 	else{
-		std::cout << "Not done" << std::endl;
+		std::cout << "get_image failed " << std::endl; 
 	}
 	
-}
-
-//----------------------
-// Print the program usage
-void print_usage(){
-	std::cout << "Usage: ./swear_paper <output file name>" << std::endl;
 }
 
 //--------------------
@@ -135,8 +154,8 @@ void print_usage(){
 // so the try catch is needed to make sure parse errors are caught correctly
 bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst, std::string& fromJson)
 {
-	bool success = false;
-	bool is_new = false;
+	bool success { false };
+	bool is_new { false };
 	
 	try{
 		// the json reply has a url value in there, so let the reddit interface get it out
@@ -145,7 +164,11 @@ bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst, std::
 		// if the url is a new one then download a new image
 		if(is_new){
 			std::cout << "Downloading new image" << std::endl;
-			dst = d.performImage(url);
+			auto rc { d.perform_image(url, dst) };
+			if(!rc.first){
+				std::cerr << rc.second << std::endl;
+				return false;
+			}
 		}
 		else{
 			// the url is the same as the last used one, so don't bother redownloading.

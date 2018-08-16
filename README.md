@@ -8,31 +8,22 @@ A command line application to generate a new desktop wallpaper, using the newest
 1. libcurl
 2. opencv
 3. nhollmans json header
+4. boost (program_options)
 
 ## Building
 
 When in the directory containing the xcode project file (if thats what you're using):
 
 ```bash
-xcodebuild build
-```
-
-OR
-
-```bash
-g++ main.cpp image.cpp reddit_interface.cpp earthporn.cpp downloader.cpp -o test_swear_paper -std=c++14 -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -L/usr/lib -lcurl
-```
-
-OR
-
-```
 mkdir build
 make
 ```
 
 ## Usage
 
-./swear_paper <outputfilename>
+```bash
+./swear_paper --help
+```
 
 ## Results
 ![alt text](Results/assfukka.jpg "assfukka")
