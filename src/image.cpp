@@ -68,7 +68,7 @@ cv::Scalar image::text_colour(const std::string& word) {
   // 128 will fall to 0 this part is the bit which is abit dodgy.
   threshold(grey, grey, 128, 255, cv::THRESH_TOZERO);
 
-  // Get the number of pixels in the rectanlge, then a count of this fully off
+  // Get the number of pixels in the rectangle, then a count of this fully off
   // and those fully on
   int numwhite = cv::countNonZero(grey);
   int total = word_size.w * word_size.h;
@@ -86,7 +86,12 @@ int image::scale_factor(void) {
   int text_height{cv::getTextSize("f", CV_FONT_HERSHEY_SCRIPT_COMPLEX, 1,
                                   m_line_thickness, nullptr)
                       .height};
-  return double(m_image.rows / 20.0) / double(text_height);
+  int text_width{cv::getTextSize("f", CV_FONT_HERSHEY_SCRIPT_COMPLEX, 1,
+                                 m_line_thickness, nullptr)
+                     .width};
+
+  return double(std::min(m_image.rows, m_image.cols) / 20.0) /
+         double(std::max(text_height, text_width));
 }
 
 struct location image::word_location(void) {

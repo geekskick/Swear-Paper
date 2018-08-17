@@ -14,7 +14,7 @@ class reddit_interface {
   reddit_interface(){};
   virtual ~reddit_interface(){};
   virtual std::string get_url_from_reply(const std::string& json_to_parse,
-                                         bool& is_new) = 0;
+                                         bool& is_new, const int idx) = 0;
   virtual std::string get_sub_reddit_url() const = 0;
 };
 

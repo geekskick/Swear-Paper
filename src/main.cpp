@@ -19,9 +19,8 @@ namespace po = boost::program_options;
 
 //--------- FREE FUNCTION PROTOTYPES --------
 bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst,
-               std::string &fromJson);
+               std::string &from_json, const int idx);
 int get_random_number(int max);
-void print_usage(void);
 
 //---------- MAIN -----------
 int main(int argc, const char *argv[]) {
@@ -59,8 +58,7 @@ int main(int argc, const char *argv[]) {
   std::cout << "Using " << swear_url << " as the source" << std::endl;
 
   downloader d;                         // a downloader
-  std::string result;                   // the json returned as a string
-  std::string word;                     // the swear word
+  std::string json_str;                 // the json returned as a string
   std::vector<std::string> swearwords;  // the list which is in use throughout
   bool swears_done{true};  // the swear words are populated when this is true
   bool all_done{false};    // the image is made
@@ -89,7 +87,7 @@ int main(int argc, const char *argv[]) {
   //------------------------------------------------
   try {
     // get the json as a string
-    auto rc = d.perform_string(e->get_sub_reddit_url(), result);
+    auto rc = d.perform_string(e->get_sub_reddit_url(), json_str);
     if (!rc.first) {
       std::cerr << rc.second << std::endl;
       exit(EXIT_FAILURE);
@@ -106,44 +104,50 @@ int main(int argc, const char *argv[]) {
 
   // If the image download was successful then do stuff,
   image downloaded_image;
-  if (get_image(d, *e, raw_image, result)) {
-    downloaded_image = image(raw_image);
-    std::cout << "The image size is " << downloaded_image.size().w << "x"
-              << downloaded_image.size().h << std::endl;
+  int idx = 0;
+  bool retry = false;
+  std::string word{""};
+  do {
+    if (get_image(d, *e, raw_image, json_str, idx)) {
+      downloaded_image = image(raw_image);
+      std::cout << "The image size is " << downloaded_image.size().w << "x"
+                << downloaded_image.size().h << "." << std::endl;
+      auto swear_copy{swearwords};
 
-    do {
-      // remember to prevent off by one errors
-      int n = get_random_number((int)swearwords.size() - 1);
-      word = swearwords[n];
+      do {
+        // remember to prevent off by one errors
+        int n = get_random_number((int)swear_copy.size() - 1);
+        word = swear_copy[n];
 
-      // remove it from the list so that it doesnt get selected again if it's
-      // too big
-      swearwords.erase(swearwords.begin() + n);
-      std::cout << "Word is:\t" << word << std::endl;
+        // remove it from the list so that it doesnt get selected again if it's
+        // too big
+        swear_copy.erase(swear_copy.begin() + n);
+        std::cout << "Word is:\t" << word << std::endl;
 
-    } while (!downloaded_image.word_fits(word) && swearwords.size() > 0);
+      } while (!downloaded_image.word_fits(word) && swear_copy.size() > 0);
 
-    if (swearwords.size() == 0) {
-      std::cout << "No more swear words left to try and fit on" << std::endl;
-      exit(EXIT_SUCCESS);
+      if (swear_copy.size() == 0) {
+        std::cout << "No more swear words left to try and fit on, trying a "
+                     "different image."
+                  << std::endl;
+        raw_image.clear();
+        retry = true;
+      }
     }
+  } while (retry);
 
-    downloaded_image.put_text(word);
+  downloaded_image.put_text(word);
 
-    // construct the filename including extension
-    if (0 >= vm.count("output")) {
-      filename = word;
-    }
-    filename += ".jpg";
-
-    std::cout << "Saving image to " << filename << std::endl;
-
-    downloaded_image.save_to_file(filename);
-    std::cout << "Done, you " << word << std::endl;
-
-  } else {
-    std::cout << "get_image failed " << std::endl;
+  // construct the filename including extension
+  if (0 >= vm.count("output")) {
+    filename = word;
   }
+  filename += ".jpg";
+
+  std::cout << "Saving image to " << filename << std::endl;
+
+  downloaded_image.save_to_file(filename);
+  std::cout << "Done, you " << word << std::endl;
 }
 
 //--------------------
@@ -152,14 +156,17 @@ int main(int argc, const char *argv[]) {
 // has stuff in it which might go wrong, so the try catch is needed to make sure
 // parse errors are caught correctly
 bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst,
-               std::string &fromJson) {
+               std::string &from_json, const int idx) {
+  if (!dst.empty()) {
+    return true;
+  }
   bool success{false};
   bool is_new{false};
 
   try {
     // the json reply has a url value in there, so let the reddit interface get
     // it out
-    std::string url = e.get_url_from_reply(fromJson, is_new);
+    std::string url = e.get_url_from_reply(from_json, is_new, idx);
 
     // if the url is a new one then download a new image
     if (is_new) {
@@ -172,11 +179,13 @@ bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst,
     } else {
       // the url is the same as the last used one, so don't bother
       // redownloading.
-      std::cout << "No new image" << std::endl;
+      std::cout << "No new image, trying the next in the reply." << std::endl;
+      return get_image(d, e, dst, from_json, idx + 1);
     }
     success = true;
   } catch (std::exception &e) {
     std::cout << e.what() << "\tline: " << __LINE__ << std::endl;
+    throw;
   }
 
   return success;

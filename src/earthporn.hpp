@@ -14,8 +14,8 @@
 //--------- EARTH PORN interface ----------
 class earthporn : public nlohmann::json, public reddit_interface {
  public:
-  std::string get_url_from_reply(const std::string& json_to_parse,
-                                 bool& is_new);
+  std::string get_url_from_reply(const std::string& json_to_parse, bool& is_new,
+                                 const int idx);
   std::string get_sub_reddit_url() const;
 
  private:

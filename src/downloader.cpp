@@ -40,12 +40,7 @@ std::pair<bool, std::string> downloader::perform_string(const std::string &url,
   // do it!
   code = curl_easy_perform(m_curl);
 
-  // check the error code
-  if (code != CURLE_OK) {
-    return {false, curl_easy_strerror(code)};
-  }
-
-  return {true, "success"};
+  return {code == CURLE_OK, curl_easy_strerror(code)};
 }
 
 // Do the download and get the reply as a vector of strings
@@ -69,7 +64,7 @@ std::pair<bool, std::string> downloader::perform_vector(
 
   result = words;
 
-  return {true, "success"};
+  return reply_as_string;
 }
 
 // Callback for putting the data rx'd into a vector of chars
@@ -99,10 +94,5 @@ std::pair<bool, std::string> downloader::perform_image(
   // do it!
   code = curl_easy_perform(m_curl);
 
-  // check the error code
-  if (code != CURLE_OK) {
-    return {false, curl_easy_strerror(code)};
-  }
-
-  return {true, "success"};
+  return {code == CURLE_OK, curl_easy_strerror(code)};
 }
