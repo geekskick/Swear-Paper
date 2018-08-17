@@ -17,6 +17,10 @@
 
 namespace po = boost::program_options;
 
+static const std::string red_colour {"\u001b[31m"};
+static const std::string reset_colour {"\u001b[0m"};
+static const std::string green_colour {"\u001b[32m"};
+
 //--------- FREE FUNCTION PROTOTYPES --------
 bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst,
                std::string &from_json, const int idx);
@@ -69,13 +73,13 @@ int main(int argc, const char *argv[]) {
   auto list = d.perform_vector(swear_url, swearwords);
 
   if (!list.first) {
-    std::cerr << list.second << std::endl;
+    std::cerr << red_colour << "----\t" << list.second << reset_colour << std::endl;
     exit(EXIT_SUCCESS);
   }
 
   // If the swear words list isn't populated set the appropriate flag
   if (swearwords.empty()) {
-    std::cerr << "Swear words not populated" << std::endl;
+    std::cerr << red_colour << "----\t" << "Swear words not populated" << reset_colour << std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -89,7 +93,7 @@ int main(int argc, const char *argv[]) {
     // get the json as a string
     auto rc = d.perform_string(e->get_sub_reddit_url(), json_str);
     if (!rc.first) {
-      std::cerr << rc.second << std::endl;
+      std::cerr << red_colour << "----\t" << rc.second << reset_colour <<  std::endl;
       exit(EXIT_FAILURE);
     }
   } catch (std::exception &e) {
@@ -147,7 +151,7 @@ int main(int argc, const char *argv[]) {
   std::cout << "----\tSaving image to " << filename << std::endl;
 
   downloaded_image.save_to_file(filename);
-  std::cout << "----\tDone, you " << word << std::endl;
+  std::cout << green_colour << "----\tDone, you " << word << reset_colour << std::endl;
 }
 
 //--------------------
@@ -173,7 +177,7 @@ bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst,
       std::cout << "----\tDownloading new image" << std::endl;
       auto rc{d.perform_image(url, dst)};
       if (!rc.first) {
-        std::cerr << rc.second << std::endl;
+        std::cerr << red_colour << "----\t" << rc.second << reset_colour << std::endl;
         return false;
       }
     } else {
