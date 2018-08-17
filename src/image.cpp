@@ -4,6 +4,7 @@
 //
 
 #include "image.hpp"
+#include <iostream>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
@@ -21,7 +22,7 @@ image::image(std::vector<char>& from) {
 }
 
 void image::put_text(const std::string& word) {
-  auto word_loc = word_location();
+  auto word_loc = word_location(word);
   cv::putText(m_image, word, cv::Point(word_loc.x, word_loc.y),
               CV_FONT_HERSHEY_SCRIPT_COMPLEX, scale_factor(), text_colour(word),
               m_line_thickness);
@@ -32,22 +33,23 @@ void image::save_to_file(const std::string& filename) {
 }
 
 bool image::word_fits(const std::string& word) {
-  struct size total_sz {
-    word_location().x + text_size(word).w, word_location().y + text_size(word).h
+  image_size total_sz {
+    word_location(word).x + text_size(word).w,
+        word_location(word).y + text_size(word).h
   };
   return total_sz.w < m_image.cols && total_sz.h < m_image.rows;
 }
 
-struct size image::size(void) {
+image_size image::size(void) {
   return {m_image.cols, m_image.rows};
 }
 
 cv::Scalar image::text_colour(const std::string& word) {
   // the location on the screen the text is going to go
-  struct location word_loc {
-    word_location()
+  image_location word_loc {
+    word_location(word)
   };
-  struct size word_size {
+  image_size word_size {
     text_size(word)
   };
 
@@ -94,11 +96,12 @@ int image::scale_factor(void) {
          double(std::max(text_height, text_width));
 }
 
-struct location image::word_location(void) {
-  return {int(m_image.rows / 4.0), int((double(m_image.cols) * 3.0 / 4.0))};
+image_location image::word_location(const std::string& word) {
+  const auto sz{text_size(word)};
+  return {(m_image.cols / 2) - (sz.w/2), (m_image.rows / 2) - (sz.h/2)};
 }
 
-struct size image::text_size(const std::string& word) {
+image_size image::text_size(const std::string& word) {
   auto sz = cv::getTextSize(word, CV_FONT_HERSHEY_SCRIPT_COMPLEX,
                             scale_factor(), m_line_thickness, nullptr);
   return {sz.width, sz.height};

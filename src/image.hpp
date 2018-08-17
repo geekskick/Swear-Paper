@@ -7,15 +7,27 @@
 #define image_hpp
 
 #include <opencv2/core/core.hpp>
+#include <ostream>
 
-struct location {
+class image_location {
+public:
   int x;
   int y;
+  friend std::ostream& operator<<(std::ostream& os, const image_location& loc) {
+    os << "(x: " << loc.x << ", y: " << loc.y << ")";
+    return os;
+  }
 };
 
-struct size {
+
+class image_size {
+public:
   int w;
   int h;
+  friend std::ostream& operator<<(std::ostream& os, const image_size& sz) {
+    os << "(w:" << sz.w << ", h: " << sz.h << ")";
+    return os;
+  }
 };
 
 class image {
@@ -27,14 +39,14 @@ class image {
   void put_text(const std::string& word);
   void save_to_file(const std::string& filename);
   bool word_fits(const std::string& word);
-  struct size size(void);
+  image_size size(void);
 
  private:
   cv::Scalar text_colour(const std::string& word);
   int scale_factor(void);
-  struct location word_location(void);
+  image_location word_location(const std::string& word);
   void init(void);
-  struct size text_size(const std::string& word);
+  image_size text_size(const std::string& word);
   cv::Mat m_image;
   int m_line_thickness;
   int m_font;

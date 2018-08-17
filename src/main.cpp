@@ -52,10 +52,10 @@ int main(int argc, const char *argv[]) {
 
   if (vm.count("output")) {
     filename = vm["output"].as<std::string>();
-    std::cout << "Outputting to " << filename << std::endl;
+    std::cout << "----\tOutputting to " << filename << std::endl;
   }
 
-  std::cout << "Using " << swear_url << " as the source" << std::endl;
+  std::cout << "----\tUsing " << swear_url << " as the source" << std::endl;
 
   downloader d;                         // a downloader
   std::string json_str;                 // the json returned as a string
@@ -65,7 +65,7 @@ int main(int argc, const char *argv[]) {
   std::vector<char> raw_image;
   std::shared_ptr<reddit_interface> e(new earthporn());
 
-  std::cout << "Getting swearwords" << std::endl;
+  std::cout << "----\tGetting swearwords" << std::endl;
   auto list = d.perform_vector(swear_url, swearwords);
 
   if (!list.first) {
@@ -82,7 +82,7 @@ int main(int argc, const char *argv[]) {
   // If the swear words were downloaded then proceed to download the url
   // from the subreddit, else no point in wasting user time so skip to tidyup
   // section
-  std::cout << "Getting Json" << std::endl;
+  std::cout << "----\tGetting Json" << std::endl;
 
   //------------------------------------------------
   try {
@@ -100,7 +100,7 @@ int main(int argc, const char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  std::cout << "Getting Image" << std::endl;
+  std::cout << "----\tGetting Image" << std::endl;
 
   // If the image download was successful then do stuff,
   image downloaded_image;
@@ -110,7 +110,7 @@ int main(int argc, const char *argv[]) {
   do {
     if (get_image(d, *e, raw_image, json_str, idx)) {
       downloaded_image = image(raw_image);
-      std::cout << "The image size is " << downloaded_image.size().w << "x"
+      std::cout << "----\tThe image size is " << downloaded_image.size().w << "x"
                 << downloaded_image.size().h << "." << std::endl;
       auto swear_copy{swearwords};
 
@@ -122,12 +122,12 @@ int main(int argc, const char *argv[]) {
         // remove it from the list so that it doesnt get selected again if it's
         // too big
         swear_copy.erase(swear_copy.begin() + n);
-        std::cout << "Word is:\t" << word << std::endl;
+        std::cout << "----\tWord is:\t" << word << std::endl;
 
       } while (!downloaded_image.word_fits(word) && swear_copy.size() > 0);
 
       if (swear_copy.size() == 0) {
-        std::cout << "No more swear words left to try and fit on, trying a "
+        std::cout << "----\tNo more swear words left to try and fit on, trying a "
                      "different image."
                   << std::endl;
         raw_image.clear();
@@ -144,10 +144,10 @@ int main(int argc, const char *argv[]) {
   }
   filename += ".jpg";
 
-  std::cout << "Saving image to " << filename << std::endl;
+  std::cout << "----\tSaving image to " << filename << std::endl;
 
   downloaded_image.save_to_file(filename);
-  std::cout << "Done, you " << word << std::endl;
+  std::cout << "----\tDone, you " << word << std::endl;
 }
 
 //--------------------
@@ -170,7 +170,7 @@ bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst,
 
     // if the url is a new one then download a new image
     if (is_new) {
-      std::cout << "Downloading new image" << std::endl;
+      std::cout << "----\tDownloading new image" << std::endl;
       auto rc{d.perform_image(url, dst)};
       if (!rc.first) {
         std::cerr << rc.second << std::endl;
@@ -179,7 +179,7 @@ bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst,
     } else {
       // the url is the same as the last used one, so don't bother
       // redownloading.
-      std::cout << "No new image, trying the next in the reply." << std::endl;
+      std::cout << "----\tNo new image, trying the next in the reply." << std::endl;
       return get_image(d, e, dst, from_json, idx + 1);
     }
     success = true;
