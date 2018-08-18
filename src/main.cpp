@@ -3,23 +3,25 @@
 //  Swear Paper
 //
 
+#include <boost/program_options.hpp>
+#include <cstddef>
 #include <iostream>
 #include <memory>
 #include <random>
 #include <string>
 
-#include <boost/program_options.hpp>
-
 #include "downloader.hpp"
+#include "downloader_delegate.hpp"
 #include "earthporn.hpp"
 #include "image.hpp"
+#include "json_parse_delegate.hpp"
 #include "reddit_interface.hpp"
 
 namespace po = boost::program_options;
 
-static const std::string red_colour {"\u001b[31m"};
-static const std::string reset_colour {"\u001b[0m"};
-static const std::string green_colour {"\u001b[32m"};
+static const std::string red_colour{"\u001b[31m"};
+static const std::string reset_colour{"\u001b[0m"};
+static const std::string green_colour{"\u001b[32m"};
 
 //--------- FREE FUNCTION PROTOTYPES --------
 bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst,
@@ -28,6 +30,12 @@ int get_random_number(int max);
 
 //---------- MAIN -----------
 int main(int argc, const char *argv[]) {
+  std::shared_ptr<downloader_delegate_b> download_del =
+      std::make_unique<downloader_delegate>();
+
+  std::shared_ptr<json_parse_delegate_b> parse_del =
+      std::make_unique<json_parse_delegate>();
+
   std::string swear_url{
       "https://raw.githubusercontent.com/LDNOOBW/"
       "List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en"};
@@ -61,25 +69,27 @@ int main(int argc, const char *argv[]) {
 
   std::cout << "----\tUsing " << swear_url << " as the source" << std::endl;
 
-  downloader d;                         // a downloader
+  downloader d(download_del);           // a downloader
   std::string json_str;                 // the json returned as a string
   std::vector<std::string> swearwords;  // the list which is in use throughout
   bool swears_done{true};  // the swear words are populated when this is true
   bool all_done{false};    // the image is made
   std::vector<char> raw_image;
-  std::shared_ptr<reddit_interface> e(new earthporn());
+  std::shared_ptr<reddit_interface> e = std::make_unique<earthporn>(parse_del);
 
   std::cout << "----\tGetting swearwords" << std::endl;
   auto list = d.perform_vector(swear_url, swearwords);
 
   if (!list.first) {
-    std::cerr << red_colour << "----\t" << list.second << reset_colour << std::endl;
+    std::cerr << red_colour << "----\t" << list.second << reset_colour
+              << std::endl;
     exit(EXIT_SUCCESS);
   }
 
   // If the swear words list isn't populated set the appropriate flag
   if (swearwords.empty()) {
-    std::cerr << red_colour << "----\t" << "Swear words not populated" << reset_colour << std::endl;
+    std::cerr << red_colour << "----\t"
+              << "Swear words not populated" << reset_colour << std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -93,7 +103,8 @@ int main(int argc, const char *argv[]) {
     // get the json as a string
     auto rc = d.perform_string(e->get_sub_reddit_url(), json_str);
     if (!rc.first) {
-      std::cerr << red_colour << "----\t" << rc.second << reset_colour <<  std::endl;
+      std::cerr << red_colour << "----\t" << rc.second << reset_colour
+                << std::endl;
       exit(EXIT_FAILURE);
     }
   } catch (std::exception &e) {
@@ -114,8 +125,8 @@ int main(int argc, const char *argv[]) {
   do {
     if (get_image(d, *e, raw_image, json_str, idx)) {
       downloaded_image = image(raw_image);
-      std::cout << "----\tThe image size is " << downloaded_image.size().w << "x"
-                << downloaded_image.size().h << "." << std::endl;
+      std::cout << "----\tThe image size is " << downloaded_image.size().w
+                << "x" << downloaded_image.size().h << "." << std::endl;
       auto swear_copy{swearwords};
 
       do {
@@ -131,9 +142,10 @@ int main(int argc, const char *argv[]) {
       } while (!downloaded_image.word_fits(word) && swear_copy.size() > 0);
 
       if (swear_copy.size() == 0) {
-        std::cout << "----\tNo more swear words left to try and fit on, trying a "
-                     "different image."
-                  << std::endl;
+        std::cout
+            << "----\tNo more swear words left to try and fit on, trying a "
+               "different image."
+            << std::endl;
         raw_image.clear();
         retry = true;
       }
@@ -151,7 +163,8 @@ int main(int argc, const char *argv[]) {
   std::cout << "----\tSaving image to " << filename << std::endl;
 
   downloaded_image.save_to_file(filename);
-  std::cout << green_colour << "----\tDone, you " << word << reset_colour << std::endl;
+  std::cout << green_colour << "----\tDone, you " << word << reset_colour
+            << std::endl;
 }
 
 //--------------------
@@ -177,13 +190,15 @@ bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst,
       std::cout << "----\tDownloading new image" << std::endl;
       auto rc{d.perform_image(url, dst)};
       if (!rc.first) {
-        std::cerr << red_colour << "----\t" << rc.second << reset_colour << std::endl;
+        std::cerr << red_colour << "----\t" << rc.second << reset_colour
+                  << std::endl;
         return false;
       }
     } else {
       // the url is the same as the last used one, so don't bother
       // redownloading.
-      std::cout << "----\tNo new image, trying the next in the reply." << std::endl;
+      std::cout << "----\tNo new image, trying the next in the reply."
+                << std::endl;
       return get_image(d, e, dst, from_json, idx + 1);
     }
     success = true;

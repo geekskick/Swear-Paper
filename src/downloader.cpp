@@ -9,7 +9,10 @@
 #include <sstream>
 
 // constructor inits libcurl
-downloader::downloader() { m_curl = curl_easy_init(); }
+
+downloader::downloader(std::shared_ptr<downloader_delegate_b> delegate)
+    : m_curl(curl_easy_init()), m_del(delegate) {}
+downloader::downloader() : m_curl(curl_easy_init()) {}
 
 // dtor safely cleans up the downloader
 downloader::~downloader() { curl_easy_cleanup(m_curl); }
@@ -38,7 +41,9 @@ std::pair<bool, std::string> downloader::perform_string(const std::string &url,
   curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &result);
 
   // do it!
+  if (m_del) m_del->download_started(url);
   code = curl_easy_perform(m_curl);
+  if (m_del) m_del->download_ended(url);
 
   return {code == CURLE_OK, curl_easy_strerror(code)};
 }
@@ -92,7 +97,9 @@ std::pair<bool, std::string> downloader::perform_image(
   curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &result);
 
   // do it!
+  if (m_del) m_del->download_started(url);
   code = curl_easy_perform(m_curl);
+  if (m_del) m_del->download_ended(url);
 
   return {code == CURLE_OK, curl_easy_strerror(code)};
 }

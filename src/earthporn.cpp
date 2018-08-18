@@ -16,6 +16,7 @@ std::string earthporn::get_url_from_reply(const std::string& json_to_parse,
   // the json has a fixed structure and this is where the newest image link is
   std::string new_url = j["data"]["children"][idx]["data"]["url"];
 
+  if (m_del) m_del->parse_result(new_url);
   if (m_previous_url == new_url) {
     is_new = false;
   } else {

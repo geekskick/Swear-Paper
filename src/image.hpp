@@ -10,7 +10,7 @@
 #include <ostream>
 
 class image_location {
-public:
+ public:
   int x;
   int y;
   friend std::ostream& operator<<(std::ostream& os, const image_location& loc) {
@@ -19,9 +19,8 @@ public:
   }
 };
 
-
 class image_size {
-public:
+ public:
   int w;
   int h;
   friend std::ostream& operator<<(std::ostream& os, const image_size& sz) {
