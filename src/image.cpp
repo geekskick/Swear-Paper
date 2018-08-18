@@ -16,14 +16,10 @@ image::image(image &rhs) {
     this->m_font = rhs.m_font;
 }
 
-image::image(std::shared_ptr<image_delegate_b> del, const int thick) 
-: m_line_thickness(thick), 
-m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX), 
-m_del(del)
-{}
+image::image(std::shared_ptr<image_delegate_b> del, const int thick) : m_line_thickness(thick), m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX), m_del(del) {}
 
 image::image(std::vector<char> &from, std::shared_ptr<image_delegate_b> del, const int thick)
-    :  m_image(cv::imdecode(from, -1)), m_line_thickness(thick), m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX),m_del(del) {
+    : m_image(cv::imdecode(from, -1)), m_line_thickness(thick), m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX), m_del(del) {
     if (m_del) {
         m_del->image_info("xxx", size());
     }

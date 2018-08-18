@@ -18,6 +18,4 @@ void verbose_program_delegate::success(const std::string& msg) {
     std::cout << ansi_codes::green << "[SUCCESS]\t" << ansi_codes::reset << msg << std::endl;
 }
 
-void quiet_program_delegate::info(const std::string&) {
-
-}
+void quiet_program_delegate::info(const std::string&) {}
