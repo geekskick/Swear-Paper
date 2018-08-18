@@ -1,5 +1,3 @@
-*.xcodeproj/
-*.xcscheme
 build/
-xcuserdata/
-DerivedData/
+*.jpg
+swear_paper
