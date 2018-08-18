@@ -84,8 +84,6 @@ int main(int argc, const char *argv[]) {
     downloader d(download_del);           // a downloader
     std::string json_str;                 // the json returned as a string
     std::vector<std::string> swearwords;  // the list which is in use throughout
-    bool swears_done{true};               // the swear words are populated when this is true
-    bool all_done{false};                 // the image is made
     std::vector<char> raw_image;
     earthporn e{parse_del};
 
@@ -126,7 +124,6 @@ int main(int argc, const char *argv[]) {
     bool retry = false;
     std::string word{""};
     do {
-        program_del->info("Downloading an image");
         if (get_image(d, e, raw_image, json_str, idx, program_del)) {
             downloaded_image = image(raw_image, img_del, thickness);
             auto swear_copy{swearwords};
@@ -183,7 +180,6 @@ bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst, std::
 
         // if the url is a new one then download a new image
         if (is_new) {
-            del->info("Downloading new image");
             auto rc{d.perform_image(url, dst)};
             if (!rc.first) {
                 del->error(rc.second);

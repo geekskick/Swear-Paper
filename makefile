@@ -1,5 +1,5 @@
 CC=clang++
-FLAGS=-std=$(STD)
+FLAGS=-std=$(STD) -Werror -Wall -Wextra -Wpedantic
 APPNAME=swear_paper
 DST_DIR=build
 EXEC=swear_paper
