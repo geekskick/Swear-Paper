@@ -21,7 +21,10 @@ std::string image_size::to_string(void) const {
     return ss.str();
 }
 
-image::image(void) { init(); }
+image::image(const int thick)
+    :   m_line_thickness(thick), 
+        m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX) 
+{ }
 
 image::image(image &rhs) {
     this->m_image = rhs.m_image;
@@ -29,7 +32,11 @@ image::image(image &rhs) {
     this->m_font = rhs.m_font;
 }
 
-image::image(std::vector<char> &from) : m_image(cv::imdecode(from, -1)) { init(); }
+image::image(std::vector<char> &from, const int thick) 
+ : m_line_thickness(thick), 
+ m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX), 
+ m_image(cv::imdecode(from, -1)) 
+ { }
 
 void image::put_text(const std::string &word) {
     auto word_loc = word_location(word);

@@ -41,11 +41,12 @@ int main(int argc, const char *argv[]) {
     po::options_description desc("Allowed Options");
     desc.add_options()("help", "Display help message")("source", po::value<std::string>(), "Specify the location of the swear word list")(
         "output", po::value<std::string>(), "Output filename")("quiet", "Don't show info messages")(
-        "skip", po::value<int>(), "Skip to the nth image in the list of available ones");
+        "skip", po::value<int>(), "Skip to the nth image in the list of available ones")("thickness", po::value<int>(), "Thickness of the line used to print the word");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
+
 
     if (vm.count("help")) {
         std::cout << desc << std::endl;
@@ -65,10 +66,17 @@ int main(int argc, const char *argv[]) {
         filename = vm["output"].as<std::string>();
         program_del->info(filename);
     }
-    int idx{0};
 
+    int idx{0};
     if (vm.count("skip")) {
         idx = vm["skip"].as<int>();
+        program_del->info("Skipping to the " + std::to_string(idx + 1)+ "th item in the list of images");
+    }
+
+    int thickness{1};
+    if(vm.count("thickness")){
+        thickness = vm["thickness"].as<int>();
+        program_del->info("Setting the line thickness to " + std::to_string(thickness));
     }
 
     downloader d(download_del);           // a downloader
@@ -118,7 +126,7 @@ int main(int argc, const char *argv[]) {
     do {
         program_del->info("Downloading an image");
         if (get_image(d, e, raw_image, json_str, idx, program_del)) {
-            downloaded_image = image(raw_image);
+            downloaded_image = image(raw_image, thickness);
             program_del->info("The image size is " + downloaded_image.size().to_string());
             auto swear_copy{swearwords};
 
