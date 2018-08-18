@@ -12,8 +12,6 @@ A command line application to generate a new desktop wallpaper, using the newest
 
 ## Building
 
-When in the directory containing the xcode project file (if thats what you're using):
-
 ```bash
 mkdir build
 make
