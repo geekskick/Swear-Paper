@@ -15,6 +15,7 @@
 #include "downloader_delegate.hpp"
 #include "earthporn.hpp"
 #include "image.hpp"
+#include "image_delegate.hpp"
 #include "json_parse_delegate.hpp"
 #include "program_delegates.hpp"
 #include "reddit_interface.hpp"
@@ -32,6 +33,7 @@ int main(int argc, const char *argv[]) {
 
     std::shared_ptr<downloader_delegate_b> download_del{std::make_shared<downloader_delegate>(program_del)};
     std::shared_ptr<json_parse_delegate_b> parse_del{std::make_shared<json_parse_delegate>(program_del)};
+    std::shared_ptr<image_delegate_b> img_del{std::make_shared<image_delegate>(program_del)};
 
     std::string swear_url{"https://raw.githubusercontent.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en"};
     std::string filename{"default"};
@@ -41,12 +43,12 @@ int main(int argc, const char *argv[]) {
     po::options_description desc("Allowed Options");
     desc.add_options()("help", "Display help message")("source", po::value<std::string>(), "Specify the location of the swear word list")(
         "output", po::value<std::string>(), "Output filename")("quiet", "Don't show info messages")(
-        "skip", po::value<int>(), "Skip to the nth image in the list of available ones")("thickness", po::value<int>(), "Thickness of the line used to print the word");
+        "skip", po::value<int>(), "Skip to the nth image in the list of available ones")("thickness", po::value<int>(),
+                                                                                         "Thickness of the line used to print the word");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
-
 
     if (vm.count("help")) {
         std::cout << desc << std::endl;
@@ -70,11 +72,11 @@ int main(int argc, const char *argv[]) {
     int idx{0};
     if (vm.count("skip")) {
         idx = vm["skip"].as<int>();
-        program_del->info("Skipping to the " + std::to_string(idx + 1)+ "th item in the list of images");
+        program_del->info("Skipping to the " + std::to_string(idx + 1) + "th item in the list of images");
     }
 
     int thickness{1};
-    if(vm.count("thickness")){
+    if (vm.count("thickness")) {
         thickness = vm["thickness"].as<int>();
         program_del->info("Setting the line thickness to " + std::to_string(thickness));
     }
@@ -126,8 +128,7 @@ int main(int argc, const char *argv[]) {
     do {
         program_del->info("Downloading an image");
         if (get_image(d, e, raw_image, json_str, idx, program_del)) {
-            downloaded_image = image(raw_image, thickness);
-            program_del->info("The image size is " + downloaded_image.size().to_string());
+            downloaded_image = image(raw_image, img_del, thickness);
             auto swear_copy{swearwords};
 
             do {
@@ -160,7 +161,6 @@ int main(int argc, const char *argv[]) {
     filename += ".jpg";
 
     downloaded_image.save_to_file(filename);
-    program_del->success("Written to " + filename + " with the word '" + word + "'");
 }
 
 //--------------------

@@ -11,7 +11,5 @@ class verbose_program_delegate : public program_delegate_b {
 
 class quiet_program_delegate : public verbose_program_delegate {
    public:
-    ~quiet_program_delegate(void);
-
     virtual void info(const std::string& msg) override;
 };

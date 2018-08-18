@@ -6,37 +6,19 @@
 #ifndef image_hpp
 #define image_hpp
 
+#include <memory>
 #include <opencv2/core/core.hpp>
 #include <ostream>
 #include <sstream>
 
-class image_size {
-   public:
-    int w;
-    int h;
-    friend std::ostream &operator<<(std::ostream &os, const image_size &sz) {
-        os << "(w:" << sz.w << ", h: " << sz.h << ")";
-        return os;
-    }
-    std::string to_string(void) const;
-};
-
-class image_location {
-   public:
-    int x;
-    int y;
-    friend std::ostream &operator<<(std::ostream &os, const image_location &loc) {
-        os << "(x: " << loc.x << ", y: " << loc.y << ")";
-        return os;
-    }
-    std::string to_string(void) const;
-};
+#include "image_delegate_b.hpp"
 
 class image {
    public:
+    image(std::shared_ptr<image_delegate_b> del, const int thick = 1);
     image(const int thick = 1);
     image(image &rhs);
-    image(std::vector<char> &from, const int thick = 1);
+    image(std::vector<char> &from, std::shared_ptr<image_delegate_b> del, const int thick = 1);
 
     void put_text(const std::string &word);
     void save_to_file(const std::string &filename) const;
@@ -47,6 +29,7 @@ class image {
     cv::Mat m_image;
     int m_line_thickness;
     int m_font;
+    std::shared_ptr<image_delegate_b> m_del;
 
     cv::Scalar text_colour(const std::string &word) const;
     int scale_factor(void) const;

@@ -14,7 +14,7 @@ INCLUDES = -I$(BOOST_DIR)
 
 SRC_DIR = src
 
-_OBJS = main.o image.o reddit_interface.o downloader.o earthporn.o downloader_delegate.o json_parse_delegate.o ansi_codes.o program_delegates.o
+_OBJS = main.o image.o downloader.o earthporn.o downloader_delegate.o image_size.o image_delegate.o image_location.o json_parse_delegate.o ansi_codes.o program_delegates.o
 
 OBJ = $(patsubst %,$(DST_DIR)/%,$(_OBJS))
 

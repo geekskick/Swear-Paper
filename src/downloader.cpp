@@ -41,7 +41,9 @@ std::pair<bool, std::string> downloader::perform_string(const std::string &url, 
     if (m_del) {
         m_del->download_started(url);
     }
+
     code = curl_easy_perform(m_curl);
+
     if (m_del) {
         m_del->download_ended(url);
     }
@@ -98,7 +100,9 @@ std::pair<bool, std::string> downloader::perform_image(const std::string &url, s
     if (m_del) {
         m_del->download_started(url);
     }
+
     code = curl_easy_perform(m_curl);
+
     if (m_del) {
         m_del->download_ended(url);
     }

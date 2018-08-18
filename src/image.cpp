@@ -7,24 +7,8 @@
 #include <iostream>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include <sstream>
 
-std::string image_location::to_string(void) const {
-    std::stringstream ss;
-    ss << *this;
-    return ss.str();
-}
-
-std::string image_size::to_string(void) const {
-    std::stringstream ss;
-    ss << *this;
-    return ss.str();
-}
-
-image::image(const int thick)
-    :   m_line_thickness(thick), 
-        m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX) 
-{ }
+image::image(const int thick) : m_line_thickness(thick), m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX) {}
 
 image::image(image &rhs) {
     this->m_image = rhs.m_image;
@@ -32,18 +16,29 @@ image::image(image &rhs) {
     this->m_font = rhs.m_font;
 }
 
-image::image(std::vector<char> &from, const int thick) 
- : m_line_thickness(thick), 
- m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX), 
- m_image(cv::imdecode(from, -1)) 
- { }
+image::image(std::shared_ptr<image_delegate_b> del, const int thick) : m_del(del), m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX), m_line_thickness(thick) {}
+
+image::image(std::vector<char> &from, std::shared_ptr<image_delegate_b> del, const int thick)
+    : m_del(del), m_line_thickness(thick), m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX), m_image(cv::imdecode(from, -1)) {
+    if (m_del) {
+        m_del->image_info("xxx", size());
+    }
+}
 
 void image::put_text(const std::string &word) {
     auto word_loc = word_location(word);
     cv::putText(m_image, word, cv::Point(word_loc.x, word_loc.y), m_font, scale_factor(), text_colour(word), m_line_thickness);
+    if (m_del) {
+        m_del->image_put_text(word, word_loc);
+    }
 }
 
-void image::save_to_file(const std::string &filename) const { cv::imwrite(filename, m_image); }
+void image::save_to_file(const std::string &filename) const {
+    cv::imwrite(filename, m_image);
+    if (m_del) {
+        m_del->image_saved(filename);
+    }
+}
 
 bool image::word_fits(const std::string &word) const {
     image_size total_sz{word_location(word).x + text_size(word).w, word_location(word).y + text_size(word).h};
