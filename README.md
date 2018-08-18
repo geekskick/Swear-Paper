@@ -22,7 +22,12 @@ make
 ## Usage
 
 ```bash
-./swear_paper --help
+./swear_paper <option>
+Allowed Options:
+  --help                Display help message
+  --source arg          Specify the location of the swear word list
+  --output arg          Output filename
+  --quiet               Don't show info messages
 ```
 
 ## Results
