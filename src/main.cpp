@@ -40,7 +40,8 @@ int main(int argc, const char *argv[]) {
 
     po::options_description desc("Allowed Options");
     desc.add_options()("help", "Display help message")("source", po::value<std::string>(), "Specify the location of the swear word list")(
-        "output", po::value<std::string>(), "Output filename")("quiet", "Don't show info messages");
+        "output", po::value<std::string>(), "Output filename")("quiet", "Don't show info messages")(
+        "skip", po::value<int>(), "Skip to the nth image in the list of available ones");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -63,6 +64,11 @@ int main(int argc, const char *argv[]) {
     if (vm.count("output")) {
         filename = vm["output"].as<std::string>();
         program_del->info(filename);
+    }
+    int idx{0};
+
+    if (vm.count("skip")) {
+        idx = vm["skip"].as<int>();
     }
 
     downloader d(download_del);           // a downloader
@@ -107,7 +113,6 @@ int main(int argc, const char *argv[]) {
 
     // If the image download was successful then do stuff,
     image downloaded_image;
-    int idx = 0;
     bool retry = false;
     std::string word{""};
     do {
