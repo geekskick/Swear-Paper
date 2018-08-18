@@ -30,15 +30,14 @@ int get_random_number(int max);
 
 //---------- MAIN -----------
 int main(int argc, const char *argv[]) {
-  std::shared_ptr<downloader_delegate_b> download_del =
-      std::make_unique<downloader_delegate>();
+  std::shared_ptr<downloader_delegate_b> download_del{
+      std::make_unique<downloader_delegate>()};
+  std::shared_ptr<json_parse_delegate_b> parse_del{
+      std::make_unique<json_parse_delegate>()};
 
-  std::shared_ptr<json_parse_delegate_b> parse_del =
-      std::make_unique<json_parse_delegate>();
-
-  std::string swear_url{
-      "https://raw.githubusercontent.com/LDNOOBW/"
-      "List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en"};
+  std::string swear_url{"https://raw.githubusercontent.com/LDNOOBW/"
+                        "List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/"
+                        "master/en"};
   std::string filename{"default"};
 
   std::cout << "OpenCV Version: " << CV_VERSION << std::endl;
@@ -69,13 +68,13 @@ int main(int argc, const char *argv[]) {
 
   std::cout << "----\tUsing " << swear_url << " as the source" << std::endl;
 
-  downloader d(download_del);           // a downloader
-  std::string json_str;                 // the json returned as a string
-  std::vector<std::string> swearwords;  // the list which is in use throughout
-  bool swears_done{true};  // the swear words are populated when this is true
-  bool all_done{false};    // the image is made
+  downloader d(download_del);          // a downloader
+  std::string json_str;                // the json returned as a string
+  std::vector<std::string> swearwords; // the list which is in use throughout
+  bool swears_done{true}; // the swear words are populated when this is true
+  bool all_done{false};   // the image is made
   std::vector<char> raw_image;
-  std::shared_ptr<reddit_interface> e = std::make_unique<earthporn>(parse_del);
+  std::shared_ptr<reddit_interface> e{std::make_unique<earthporn>(parse_del)};
 
   std::cout << "----\tGetting swearwords" << std::endl;
   auto list = d.perform_vector(swear_url, swearwords);
@@ -88,8 +87,8 @@ int main(int argc, const char *argv[]) {
 
   // If the swear words list isn't populated set the appropriate flag
   if (swearwords.empty()) {
-    std::cerr << red_colour << "----\t"
-              << "Swear words not populated" << reset_colour << std::endl;
+    std::cerr << red_colour << "----\tSwear words not populated" << reset_colour
+              << std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -142,10 +141,9 @@ int main(int argc, const char *argv[]) {
       } while (!downloaded_image.word_fits(word) && swear_copy.size() > 0);
 
       if (swear_copy.size() == 0) {
-        std::cout
-            << "----\tNo more swear words left to try and fit on, trying a "
-               "different image."
-            << std::endl;
+        std::cout << "----\tNo more swear words left to try and fit on, trying "
+                     "a different image."
+                  << std::endl;
         raw_image.clear();
         retry = true;
       }
@@ -213,9 +211,9 @@ bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst,
 //----------------------
 // Gets a random number in the range 0 - max
 int get_random_number(int max) {
-  std::random_device rd;  // only used once to initialise (seed) engine
+  std::random_device rd; // only used once to initialise (seed) engine
   std::mt19937 rng(
-      rd());  // random-number engine used (Mersenne-Twister in this case)
-  std::uniform_int_distribution<int> uni(0, max);  // guaranteed unbiased
+      rd()); // random-number engine used (Mersenne-Twister in this case)
+  std::uniform_int_distribution<int> uni(0, max); // guaranteed unbiased
   return uni(rng);
 }

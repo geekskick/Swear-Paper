@@ -21,15 +21,15 @@ downloader::~downloader() { curl_easy_cleanup(m_curl); }
 size_t downloader::write_data_to_string(void *ptr, size_t size, size_t nmemb,
                                         void *stream) {
   std::string data((const char *)ptr,
-                   (size_t)size * nmemb);  // create new string from the data
-  *((std::string *)stream) += data;        // add the data to the out string
+                   (size_t)size * nmemb); // create new string from the data
+  *((std::string *)stream) += data;       // add the data to the out string
   return size * nmemb;
 }
 
 // Do the download and get the reply as a string
 std::pair<bool, std::string> downloader::perform_string(const std::string &url,
                                                         std::string &result) {
-  CURLcode code;  // error codes
+  CURLcode code; // error codes
 
   // connect to the url
   curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
@@ -41,25 +41,30 @@ std::pair<bool, std::string> downloader::perform_string(const std::string &url,
   curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &result);
 
   // do it!
-  if (m_del) m_del->download_started(url);
+  if (m_del) {
+    m_del->download_started(url);
+  }
   code = curl_easy_perform(m_curl);
-  if (m_del) m_del->download_ended(url);
+  if (m_del) {
+    m_del->download_ended(url);
+  }
 
   return {code == CURLE_OK, curl_easy_strerror(code)};
 }
 
 // Do the download and get the reply as a vector of strings
-std::pair<bool, std::string> downloader::perform_vector(
-    const std::string &url, std::vector<std::string> &result) {
+std::pair<bool, std::string>
+downloader::perform_vector(const std::string &url,
+                           std::vector<std::string> &result) {
   std::string str;
-  auto reply_as_string{perform_string(url, str)};  // the big string
+  auto reply_as_string{perform_string(url, str)}; // the big string
   if (!reply_as_string.first) {
     return reply_as_string;
   };
 
-  std::string to;                  // used for iterationg
-  std::stringstream stream(str);   // The big reply as a stringstream
-  std::vector<std::string> words;  // the final vector
+  std::string to;                 // used for iterationg
+  std::stringstream stream(str);  // The big reply as a stringstream
+  std::vector<std::string> words; // the final vector
 
   // iterate over the big string and put the lines into the 'to' variable, then
   // push that to the back of the vector
@@ -77,14 +82,14 @@ size_t downloader::write_data_to_vector(void *inptr, size_t size, size_t nmemb,
                                         void *userdata) {
   char *ptr = (char *)inptr;
   std::vector<char> *stream{(std::vector<char> *)userdata};
-  size_t count = size * nmemb;
+  size_t count{size * nmemb};
   stream->insert(stream->end(), ptr, ptr + count);
   return count;
 }
 
 // Do the download and get the reply as a vector of charactrers (image)!
-std::pair<bool, std::string> downloader::perform_image(
-    const std::string &url, std::vector<char> &result) {
+std::pair<bool, std::string>
+downloader::perform_image(const std::string &url, std::vector<char> &result) {
   CURLcode code;
 
   // connect to the url
@@ -97,9 +102,13 @@ std::pair<bool, std::string> downloader::perform_image(
   curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &result);
 
   // do it!
-  if (m_del) m_del->download_started(url);
+  if (m_del) {
+    m_del->download_started(url);
+  }
   code = curl_easy_perform(m_curl);
-  if (m_del) m_del->download_ended(url);
+  if (m_del) {
+    m_del->download_ended(url);
+  }
 
   return {code == CURLE_OK, curl_easy_strerror(code)};
 }

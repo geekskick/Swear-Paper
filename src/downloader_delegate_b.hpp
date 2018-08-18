@@ -4,7 +4,7 @@
 #include <string>
 
 class downloader_delegate_b {
- public:
+public:
   virtual ~downloader_delegate_b(void) {}
 
   virtual void download_started(const std::string &url) = 0;

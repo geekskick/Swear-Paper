@@ -6,12 +6,12 @@
 #ifndef downloader_hpp
 #define downloader_hpp
 
+#include "downloader_delegate_b.hpp"
 #include <iostream>
 #include <vector>
-#include "downloader_delegate_b.hpp"
 
 class downloader {
- public:
+public:
   downloader();
   downloader(std::shared_ptr<downloader_delegate_b> delegate);
   ~downloader();
@@ -23,8 +23,8 @@ class downloader {
   std::pair<bool, std::string> perform_image(const std::string &url,
                                              std::vector<char> &result);
 
- private:
-  void *m_curl;  // curl object
+private:
+  void *m_curl; // curl object
   std::shared_ptr<downloader_delegate_b> m_del;
 
   // when data is recieved this function puts it into the stream
