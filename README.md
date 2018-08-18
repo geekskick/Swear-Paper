@@ -36,4 +36,7 @@ Allowed Options:
 ![alt text](Results/motherfuckers.jpg "motherfuckers")
 ![alt text](Results/buttplug.jpg "buttplug")
 ![alt text](Results/testicles.jpg "grope")
+![alt text](Results/blue_waffle.jpg "blue waffle")
+![alt text](Results/bitches.jpg "bitches")
+![alt text]("Results/jelly_donut.jpg" "jelly donut")
 
