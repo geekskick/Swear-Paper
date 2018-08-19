@@ -16,8 +16,10 @@
 class image {
    public:
     image(std::shared_ptr<image_delegate_b> del, const int thick = 1);
-    image(const int thick = 1);
+    explicit image(const int thick = 1);
     image(image &rhs);
+    image &operator=(image &rhs);
+    image &operator=(image &&rhs);
     image(std::vector<char> &from, std::shared_ptr<image_delegate_b> del, const int thick = 1);
 
     void put_text(const std::string &word);
@@ -34,7 +36,6 @@ class image {
     cv::Scalar text_colour(const std::string &word) const;
     int scale_factor(void) const;
     image_location word_location(const std::string &word) const;
-    void init(void);
     image_size text_size(const std::string &word) const;
 };
 

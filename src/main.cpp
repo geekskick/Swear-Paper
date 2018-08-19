@@ -41,8 +41,8 @@ int main(int argc, const char *argv[]) {
     program_del->info("OpenCV Version: " + std::string(CV_VERSION));
 
     po::options_description desc("Allowed Options");
-    desc.add_options()("help", "Display help message")("source", po::value<std::string>(), "Specify the location of the swear word list")(
-        "output", po::value<std::string>(), "Output filename")("quiet", "Don't show info messages")(
+    desc.add_options()("help,h", "Display help message")("source,s", po::value<std::string>(), "Specify the location of the swear word list")(
+        "output,o", po::value<std::string>(), "Output filename")("quiet,q", "Don't show info messages")(
         "skip", po::value<int>(), "Skip to the nth image in the list of available ones")("thickness", po::value<int>(),
                                                                                          "Thickness of the line used to print the word");
 
@@ -171,9 +171,10 @@ bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst, std::
         return true;
     }
     bool success{false};
-    bool is_new{false};
 
     try {
+        bool is_new{false};
+
         // the json reply has a url value in there, so let the reddit interface get
         // it out
         std::string url = e.get_url_from_reply(from_json, is_new, idx);

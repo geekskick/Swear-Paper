@@ -13,7 +13,7 @@
 class downloader {
    public:
     downloader();
-    downloader(std::shared_ptr<downloader_delegate_b> delegate);
+    explicit downloader(std::shared_ptr<downloader_delegate_b> delegate);
     ~downloader();
 
     std::pair<bool, std::string> perform_string(const std::string &url, std::string &result);

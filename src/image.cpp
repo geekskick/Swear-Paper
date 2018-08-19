@@ -10,11 +10,7 @@
 
 image::image(const int thick) : m_line_thickness(thick), m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX) {}
 
-image::image(image &rhs) {
-    this->m_image = rhs.m_image;
-    this->m_line_thickness = rhs.m_line_thickness;
-    this->m_font = rhs.m_font;
-}
+image::image(image &rhs) : m_image(rhs.m_image), m_line_thickness(rhs.m_line_thickness), m_font(rhs.m_font), m_del(rhs.m_del) {}
 
 image::image(std::shared_ptr<image_delegate_b> del, const int thick) : m_line_thickness(thick), m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX), m_del(del) {}
 
@@ -99,7 +95,18 @@ image_size image::text_size(const std::string &word) const {
     auto sz = cv::getTextSize(word, m_font, scale_factor(), m_line_thickness, nullptr);
     return {sz.width, sz.height};
 }
-void image::init(void) {
-    m_line_thickness = 2;
-    m_font = CV_FONT_HERSHEY_SCRIPT_COMPLEX;
+
+image &image::operator=(image &rhs) {
+    this->m_image = rhs.m_image;
+    this->m_line_thickness = rhs.m_line_thickness;
+    this->m_font = rhs.m_font;
+    this->m_del = rhs.m_del;
+    return *this;
+}
+image &image::operator=(image &&rhs) {
+    this->m_image = rhs.m_image;
+    this->m_line_thickness = rhs.m_line_thickness;
+    this->m_font = rhs.m_font;
+    this->m_del = rhs.m_del;
+    return *this;
 }
