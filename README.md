@@ -14,18 +14,33 @@ A command line application to generate a new desktop wallpaper, using the newest
 
 ```bash
 mkdir build
-make
+make all
 ```
+or to run static analysis
+```
+make cppcheck
+```
+or to debug with lldb
+```
+make lldb
+```
+or to format the source using clang-format
+```
+make format
+```
+The release version is `swear_paper` and the debug version is `dswear_paper`.
 
 ## Usage
 
 ```bash
 ./swear_paper <option>
 Allowed Options:
-  --help                Display help message
-  --source arg          Specify the location of the swear word list
-  --output arg          Output filename
-  --quiet               Don't show info messages
+  -h [ --help ]         Display help message
+  -s [ --source ] arg   Specify the location of the swear word list
+  -o [ --output ] arg   Output filename
+  -q [ --quiet ]        Don't show info messages
+  --skip arg            Skip to the nth image in the list of available ones
+  --thickness arg       Thickness of the line used to print the word
 ```
 
 ## Results
