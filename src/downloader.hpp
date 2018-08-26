@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include "downloader_delegate_b.hpp"
+#include <curl/curl.h>
 
 class downloader {
    public:
@@ -27,6 +28,8 @@ class downloader {
     // when data is recieved this function puts it into the stream
     static size_t write_data_to_string(void *ptr, size_t size, size_t nmemb, void *stream);
     static size_t write_data_to_vector(void *ptr, size_t size, size_t nmemb, void *stream);
+    void check_rc(const CURLcode& rc, const std::string& msg) const;
+
 };
 
 #endif /* downloader_hpp */

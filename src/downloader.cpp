@@ -4,7 +4,6 @@
 //
 
 #include "downloader.hpp"
-#include <curl/curl.h>
 #include <curl/easy.h>
 #include <sstream>
 
@@ -29,13 +28,16 @@ std::pair<bool, std::string> downloader::perform_string(const std::string &url, 
     CURLcode code;  // error codes
 
     // connect to the url
-    curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
+    code = curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
+    check_rc(code, "curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str()");
 
     // when reply is recieved from the write function it goes to this call back
-    curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, write_data_to_string);
+    code = curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, write_data_to_string);
+    check_rc(code, "url_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, write_data_to_string)");
 
     // argument to send to the write callback
-    curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &result);
+    code = curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &result);
+    check_rc(code, "url_easy_setopt(m_curl, CURLOPT_WRITEDATA, &result)");
 
     // do it!
     if (m_del) {
@@ -48,7 +50,24 @@ std::pair<bool, std::string> downloader::perform_string(const std::string &url, 
         m_del->download_ended(url);
     }
 
-    return {code == CURLE_OK, curl_easy_strerror(code)};
+    check_rc(code, "url_easy_perform(m_curl)");
+
+    long response_code = {0};
+    const long success = {200};
+    code = curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &response_code);
+    check_rc(code, "curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &response_code)");
+
+    if(success != response_code){
+        return {false, "Response: " + std::to_string(response_code)};
+    }
+
+    return {true, "success"};
+}
+
+void downloader::check_rc(const CURLcode& rc, const std::string& msg) const {
+    if(CURLE_OK != rc){
+        throw std::runtime_error(std::string(msg + std::string(": ") + std::string(curl_easy_strerror(rc))));
+    }
 }
 
 // Do the download and get the reply as a vector of strings
