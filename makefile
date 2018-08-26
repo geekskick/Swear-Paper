@@ -1,8 +1,12 @@
 CC=clang++
 FLAGS=-std=$(STD) -Werror -Wall -Wextra -Wpedantic
-DBG_FLAGS=-g -O0
+DEBUG_FLAGS=-g -O0
+RELEASE_FLAGS=-03
+
 APPNAME=swear_paper
 DST_DIR=build
+RELEASE_DIR=release
+DEBUG_DIR=debug
 EXEC=swear_paper
 
 BOOST_DIR=/usr/local/include
@@ -17,21 +21,26 @@ SRC_DIR = src
 
 _OBJS = main.o image.o downloader.o earthporn.o downloader_delegate.o image_size.o image_delegate.o image_location.o json_parse_delegate.o ansi_codes.o program_delegates.o
 
-OBJ = $(patsubst %,$(DST_DIR)/%,$(_OBJS))
+DEBUG_OBJS= $(patsubst %,$(DST_DIR)/$(DEBUG_DIR)/%,$(_OBJS))
+RELEASE_OBJS=$(patsubst %, $(DST_DIR)/$(RELEASE_DIR)/%, $(_OBJS))
 
 EXEC_DIR=./
 
-debug: $(OBJ)
-	$(CC) -o d$(EXEC) $^ $(DBG_FLAGS) $(FLAGS) $(LIBS_LOC) $(LIBS)
 
-release: $(OBJ)
-	$(CC) -o $(EXEC) $^ $(FLAGS) $(LIBS_LOC) $(LIBS)
+debug: $(DEBUG_OBJS)
+	$(CC) -o d$(EXEC) $^ $(FLAGS) $(DEBUG_FLAGS) $(LIBS_LOC) $(LIBS)
 
-$(DST_DIR)/%.o: $(SRC_DIR)/%.cpp
+release: $(RELEASE_OBJS)
+	$(CC) -o $(EXEC) $^ $(FLAGS) $(RELEASE_FLAGS) $(LIBS_LOC) $(LIBS)
+
+$(DST_DIR)/$(DEBUG_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) -c $< -o $@ $(FLAGS) $(DBG_FLAGS) $(INCLUDES)
 
+$(DST_DIR)/$(RELEASE_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CC) -c $< -o $@ $(FLAGS) $(RELEASE_FLAGS) $(INCLUDES)
+
 clean:
-	rm $(DST_DIR)/*.o $(EXEC) d$(EXEC)
+	rm $(DST_DIR)/*/*.o $(EXEC) d$(EXEC)
 
 format:
 	clang-format -i -style=file src/*
