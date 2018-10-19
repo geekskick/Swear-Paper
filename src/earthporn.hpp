@@ -8,7 +8,7 @@
 #define earthporn_hpp
 
 #include <iostream>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include "reddit_interface.hpp"
 
 //--------- EARTH PORN interface ----------
