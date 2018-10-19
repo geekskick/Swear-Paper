@@ -13,7 +13,7 @@ BOOST_DIR=/usr/local/include
 
 EXEC=swear_paper
 
-LIBS=-lcurl -lopencv_highgui -lopencv_core -lopencv_imgproc -lboost_program_options
+LIBS=-lcurl -lopencv_highgui -lopencv_core -lopencv_imgproc -lboost_program_options -lopencv_imgcodecs
 LIBS_LOC=-L/usr/local/lib -L/usr/lib
 INCLUDES = -I$(BOOST_DIR)
 

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
 
 image::image(const int thick) : m_line_thickness(thick), m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX) {}
 
