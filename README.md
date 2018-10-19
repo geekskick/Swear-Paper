@@ -6,7 +6,7 @@ A command line application to generate a new desktop wallpaper, using the newest
 ## Dependancies
 
 1. libcurl
-2. opencv
+2. opencv (this works with 3.4.3!)
 3. nhollmans json header
 4. boost (program_options)
 
