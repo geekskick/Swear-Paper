@@ -24,8 +24,10 @@ size_t downloader::write_data_to_string(void *ptr, size_t size, size_t nmemb, vo
 }
 
 // Do the download and get the reply as a string
-std::pair<bool, std::string> downloader::perform_string(const std::string &url, std::string &result) {
+std::optional<std::string> downloader::perform_string(const std::string &url) {
     CURLcode code; // error codes
+
+    auto result = std::string{};
 
     // connect to the url
     code = curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
@@ -58,10 +60,10 @@ std::pair<bool, std::string> downloader::perform_string(const std::string &url, 
     check_rc(code, "curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &response_code)");
 
     if (success != response_code) {
-        return {false, "Response: " + std::to_string(response_code)};
+        return {};
     }
 
-    return {true, "success"};
+    return result;
 }
 
 void downloader::check_rc(const CURLcode &rc, const std::string &msg) const {
@@ -71,15 +73,14 @@ void downloader::check_rc(const CURLcode &rc, const std::string &msg) const {
 }
 
 // Do the download and get the reply as a vector of strings
-std::pair<bool, std::string> downloader::perform_vector(const std::string &url, std::vector<std::string> &result) {
-    std::string str;
-    auto reply_as_string{perform_string(url, str)}; // the big string
-    if (!reply_as_string.first) {
-        return reply_as_string;
+std::optional<std::vector<std::string>> downloader::perform_vector(const std::string &url) {
+    const auto reply_as_string{perform_string(url)};
+    if (!reply_as_string) {
+        return {};
     };
 
-    std::string to;                 // used for iterationg
-    std::stringstream stream(str);  // The big reply as a stringstream
+    std::string to;                 // used for iteration
+    std::stringstream stream(*reply_as_string);  // The big reply as a stringstream
     std::vector<std::string> words; // the final vector
 
     // iterate over the big string and put the lines into the 'to' variable, then
@@ -88,9 +89,7 @@ std::pair<bool, std::string> downloader::perform_vector(const std::string &url, 
         words.push_back(to);
     }
 
-    result = words;
-
-    return reply_as_string;
+    return words;
 }
 
 // Callback for putting the data rx'd into a vector of chars

@@ -7,9 +7,10 @@
 #define downloader_hpp
 
 #include "downloader_delegate_b.hpp"
-#include <curl/curl.h>
+#include "curl/curl.h"
 #include <iostream>
 #include <vector>
+#include <optional>
 
 class downloader {
 public:
@@ -17,8 +18,8 @@ public:
     explicit downloader(std::shared_ptr<downloader_delegate_b> delegate);
     ~downloader();
 
-    std::pair<bool, std::string> perform_string(const std::string &url, std::string &result);
-    std::pair<bool, std::string> perform_vector(const std::string &url, std::vector<std::string> &result);
+    std::optional<std::string> perform_string(const std::string &url);
+    std::optional<std::vector<std::string>> perform_vector(const std::string &url);
     std::pair<bool, std::string> perform_image(const std::string &url, std::vector<char> &result);
 
 private:

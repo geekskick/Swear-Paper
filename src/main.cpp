@@ -30,22 +30,20 @@ int get_random_number(int max);
 int main(int argc, const char *argv[]) {
     auto program_del = std::shared_ptr<program_delegate_b>{std::make_shared<verbose_program_delegate>()};
 
-    std::shared_ptr<downloader_delegate_b> download_del{std::make_shared<downloader_delegate>(program_del)};
-    std::shared_ptr<json_parse_delegate_b> parse_del{std::make_shared<json_parse_delegate>(program_del)};
-    std::shared_ptr<image_delegate_b> img_del{std::make_shared<image_delegate>(program_del)};
+    auto download_del = std::shared_ptr<downloader_delegate_b>{std::make_shared<downloader_delegate>(program_del)};
+    auto parse_del = std::shared_ptr<json_parse_delegate_b>{std::make_shared<json_parse_delegate>(program_del)};
+    auto img_del = std::shared_ptr<image_delegate_b>{std::make_shared<image_delegate>(program_del)};
 
-    std::string swear_url{"https://raw.githubusercontent.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en"};
-    std::string filename{"default"};
+    auto swear_url = std::string{"https://raw.githubusercontent.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en"};
+    auto filename  = std::string{"default"};
 
-    program_del->info("OpenCV Version: " + std::string(CV_VERSION));
-
-    po::options_description desc("Allowed Options");
+    auto desc = po::options_description("Allowed Options");
     desc.add_options()("help,h", "Display help message")("source,s", po::value<std::string>(), "Specify the location of the swear word list")(
         "output,o", po::value<std::string>(), "Output filename")("quiet,q", "Don't show info messages")(
         "skip", po::value<int>(), "Skip to the nth image in the list of available ones")("thickness", po::value<int>(),
                                                                                          "Thickness of the line used to print the word");
 
-    po::variables_map vm;
+    auto vm = po::variables_map();
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
 
@@ -68,34 +66,31 @@ int main(int argc, const char *argv[]) {
         program_del->info(filename);
     }
 
-    int idx{0};
+    auto idx = 0;
     if (vm.count("skip")) {
         idx = vm["skip"].as<int>();
         program_del->info("Skipping to the " + std::to_string(idx + 1) + "th item in the list of images");
     }
 
-    int thickness{1};
+    auto thickness = 1;
     if (vm.count("thickness")) {
         thickness = vm["thickness"].as<int>();
         program_del->info("Setting the line thickness to " + std::to_string(thickness));
     }
 
-    downloader d(download_del);          // a downloader
-    std::string json_str;                // the json returned as a string
-    std::vector<std::string> swearwords; // the list which is in use throughout
-    std::vector<char> raw_image;
-    earthporn e{parse_del};
+    auto d = downloader{download_del};
+    auto raw_image = std::vector<char>{};
+    auto e = earthporn{parse_del};
 
     program_del->info("Getting swearwords from " + swear_url);
-    auto list = d.perform_vector(swear_url, swearwords);
-
-    if (!list.first) {
-        program_del->error(list.second);
+    auto swearwords = d.perform_vector(swear_url);
+    if (!swearwords) {
+        program_del->error("Unable to get swearwords");
         exit(EXIT_SUCCESS);
     }
 
     // If the swear words list isn't populated set the appropriate flag
-    if (swearwords.empty()) {
+    if (swearwords->empty()) {
         program_del->error("Swear words not populated");
         exit(EXIT_SUCCESS);
     }
@@ -105,16 +100,10 @@ int main(int argc, const char *argv[]) {
     // section
     program_del->info("Getting image json from " + e.get_sub_reddit_url());
 
-    //------------------------------------------------
-    try {
-        // get the json as a string
-        auto rc = d.perform_string(e.get_sub_reddit_url(), json_str);
-        if (!rc.first) {
-            program_del->error(rc.second);
-            exit(EXIT_FAILURE);
-        }
-    } catch (std::exception &e) {
-        program_del->error(e.what() + std::to_string(__LINE__));
+    // get the json as a string
+    auto json_string = d.perform_string(e.get_sub_reddit_url());
+    if (!json_string) {
+        program_del->error("Unable to get JSON");
         exit(EXIT_FAILURE);
     }
 
@@ -123,9 +112,9 @@ int main(int argc, const char *argv[]) {
     bool retry = false;
     std::string word{""};
     do {
-        if (get_image(d, e, raw_image, json_str, idx, program_del)) {
+        if (get_image(d, e, raw_image,*json_string, idx, program_del)) {
             downloaded_image = image(raw_image, img_del, thickness);
-            auto swear_copy{swearwords};
+            auto swear_copy{*swearwords};
 
             do {
                 // remember to prevent off by one errors
