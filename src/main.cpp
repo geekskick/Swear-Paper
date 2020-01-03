@@ -3,7 +3,7 @@
 //  Swear Paper
 //
 
-#include <boost/program_options.hpp>
+#include "boost/program_options.hpp"
 #include <cstddef>
 #include <iostream>
 #include <memory>
@@ -29,7 +29,7 @@ int get_random_number(int max);
 
 //---------- MAIN -----------
 int main(int argc, const char *argv[]) {
-    std::shared_ptr<program_delegate_b> program_del{std::make_shared<verbose_program_delegate>()};
+    auto program_del = std::shared_ptr<program_delegate_b>{std::make_shared<verbose_program_delegate>()};
 
     std::shared_ptr<downloader_delegate_b> download_del{std::make_shared<downloader_delegate>(program_del)};
     std::shared_ptr<json_parse_delegate_b> parse_del{std::make_shared<json_parse_delegate>(program_del)};

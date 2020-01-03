@@ -9,14 +9,14 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
 
-image::image(const int thick) : m_line_thickness(thick), m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX) {}
+image::image(const int thick) : m_line_thickness(thick), m_font(cv::FONT_HERSHEY_SCRIPT_COMPLEX) {}
 
 image::image(image &rhs) : m_image(rhs.m_image), m_line_thickness(rhs.m_line_thickness), m_font(rhs.m_font), m_del(rhs.m_del) {}
 
-image::image(std::shared_ptr<image_delegate_b> del, const int thick) : m_line_thickness(thick), m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX), m_del(del) {}
+image::image(std::shared_ptr<image_delegate_b> del, const int thick) : m_line_thickness(thick), m_font(cv::FONT_HERSHEY_SCRIPT_COMPLEX), m_del(del) {}
 
 image::image(std::vector<char> &from, std::shared_ptr<image_delegate_b> del, const int thick)
-    : m_image(cv::imdecode(from, -1)), m_line_thickness(thick), m_font(CV_FONT_HERSHEY_SCRIPT_COMPLEX), m_del(del) {
+    : m_image(cv::imdecode(from, -1)), m_line_thickness(thick), m_font(cv::FONT_HERSHEY_SCRIPT_COMPLEX), m_del(del) {
     if (m_del) {
         m_del->image_info("xxx", size());
     }
@@ -60,7 +60,7 @@ cv::Scalar image::text_colour(const std::string &word) const {
 
     // convert to grey and threshold, this will turn the lightest pixels white and
     // the darker ones black
-    cv::cvtColor(roi, grey, CV_BGR2GRAY);
+    cv::cvtColor(roi, grey, cv::COLOR_BGR2GRAY);
 
     // anything brighter than half will remain the same, and anything less than
     // 128 will fall to 0 this part is the bit which is abit dodgy.
