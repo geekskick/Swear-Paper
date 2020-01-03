@@ -4,7 +4,7 @@
 #include <ostream>
 
 class image_size {
-   public:
+public:
     int w;
     int h;
     friend std::ostream &operator<<(std::ostream &os, const image_size &sz) {

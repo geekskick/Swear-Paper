@@ -18,14 +18,14 @@ downloader::~downloader() { curl_easy_cleanup(m_curl); }
 // Callback for putting the data rx'd into a string
 size_t downloader::write_data_to_string(void *ptr, size_t size, size_t nmemb, void *stream) {
     std::string data((const char *)ptr,
-                     (size_t)size * nmemb);  // create new string from the data
-    *((std::string *)stream) += data;        // add the data to the out string
+                     (size_t)size * nmemb); // create new string from the data
+    *((std::string *)stream) += data;       // add the data to the out string
     return size * nmemb;
 }
 
 // Do the download and get the reply as a string
 std::pair<bool, std::string> downloader::perform_string(const std::string &url, std::string &result) {
-    CURLcode code;  // error codes
+    CURLcode code; // error codes
 
     // connect to the url
     code = curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
@@ -57,15 +57,15 @@ std::pair<bool, std::string> downloader::perform_string(const std::string &url, 
     code = curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &response_code);
     check_rc(code, "curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &response_code)");
 
-    if(success != response_code){
+    if (success != response_code) {
         return {false, "Response: " + std::to_string(response_code)};
     }
 
     return {true, "success"};
 }
 
-void downloader::check_rc(const CURLcode& rc, const std::string& msg) const {
-    if(CURLE_OK != rc){
+void downloader::check_rc(const CURLcode &rc, const std::string &msg) const {
+    if (CURLE_OK != rc) {
         throw std::runtime_error(std::string(msg + std::string(": ") + std::string(curl_easy_strerror(rc))));
     }
 }
@@ -73,14 +73,14 @@ void downloader::check_rc(const CURLcode& rc, const std::string& msg) const {
 // Do the download and get the reply as a vector of strings
 std::pair<bool, std::string> downloader::perform_vector(const std::string &url, std::vector<std::string> &result) {
     std::string str;
-    auto reply_as_string{perform_string(url, str)};  // the big string
+    auto reply_as_string{perform_string(url, str)}; // the big string
     if (!reply_as_string.first) {
         return reply_as_string;
     };
 
-    std::string to;                  // used for iterationg
-    std::stringstream stream(str);   // The big reply as a stringstream
-    std::vector<std::string> words;  // the final vector
+    std::string to;                 // used for iterationg
+    std::stringstream stream(str);  // The big reply as a stringstream
+    std::vector<std::string> words; // the final vector
 
     // iterate over the big string and put the lines into the 'to' variable, then
     // push that to the back of the vector

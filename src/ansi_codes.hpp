@@ -4,7 +4,7 @@
 #include <string>
 
 class ansi_codes {
-   public:
+public:
     const static std::string red;
     const static std::string reset;
     const static std::string yellow;

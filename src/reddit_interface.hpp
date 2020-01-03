@@ -13,14 +13,14 @@
 
 //--------- ABSTRACT CLASS -------
 class reddit_interface {
-   public:
+public:
     reddit_interface(){};
     reddit_interface(std::shared_ptr<json_parse_delegate_b> d) : m_del(d){};
     virtual ~reddit_interface(){};
     virtual std::string get_url_from_reply(const std::string &json_to_parse, bool &is_new, const int idx) = 0;
     virtual std::string get_sub_reddit_url() const = 0;
 
-   protected:
+protected:
     std::shared_ptr<json_parse_delegate_b> m_del;
 };
 

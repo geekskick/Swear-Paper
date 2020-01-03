@@ -4,7 +4,7 @@
 #include <ostream>
 
 class image_location {
-   public:
+public:
     int x;
     int y;
     friend std::ostream &operator<<(std::ostream &os, const image_location &loc) {

@@ -14,7 +14,7 @@
 #include "image_delegate_b.hpp"
 
 class image {
-   public:
+public:
     image(std::shared_ptr<image_delegate_b> del, const int thick = 1);
     explicit image(const int thick = 1);
     image(image &rhs);
@@ -27,7 +27,7 @@ class image {
     bool word_fits(const std::string &word) const;
     image_size size(void);
 
-   private:
+private:
     cv::Mat m_image;
     int m_line_thickness;
     int m_font;

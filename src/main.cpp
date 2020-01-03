@@ -23,8 +23,7 @@
 namespace po = boost::program_options;
 
 //--------- FREE FUNCTION PROTOTYPES --------
-bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst, std::string &from_json, const int idx,
-               std::shared_ptr<program_delegate_b> &del);
+bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst, std::string &from_json, const int idx, std::shared_ptr<program_delegate_b> &del);
 int get_random_number(int max);
 
 //---------- MAIN -----------
@@ -81,9 +80,9 @@ int main(int argc, const char *argv[]) {
         program_del->info("Setting the line thickness to " + std::to_string(thickness));
     }
 
-    downloader d(download_del);           // a downloader
-    std::string json_str;                 // the json returned as a string
-    std::vector<std::string> swearwords;  // the list which is in use throughout
+    downloader d(download_del);          // a downloader
+    std::string json_str;                // the json returned as a string
+    std::vector<std::string> swearwords; // the list which is in use throughout
     std::vector<char> raw_image;
     earthporn e{parse_del};
 
@@ -165,8 +164,7 @@ int main(int argc, const char *argv[]) {
 // dst matrix returns true if theres wasn't an exception. The get_url_from_reply
 // has stuff in it which might go wrong, so the try catch is needed to make sure
 // parse errors are caught correctly
-bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst, std::string &from_json, const int idx,
-               std::shared_ptr<program_delegate_b> &del) {
+bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst, std::string &from_json, const int idx, std::shared_ptr<program_delegate_b> &del) {
     if (!dst.empty()) {
         return true;
     }
@@ -204,8 +202,8 @@ bool get_image(downloader &d, reddit_interface &e, std::vector<char> &dst, std::
 //----------------------
 // Gets a random number in the range 0 - max
 int get_random_number(int max) {
-    std::random_device rd;                           // only used once to initialise (seed) engine
-    std::mt19937 rng(rd());                          // random-number engine used (Mersenne-Twister in this case)
-    std::uniform_int_distribution<int> uni(0, max);  // guaranteed unbiased
+    std::random_device rd;                          // only used once to initialise (seed) engine
+    std::mt19937 rng(rd());                         // random-number engine used (Mersenne-Twister in this case)
+    std::uniform_int_distribution<int> uni(0, max); // guaranteed unbiased
     return uni(rng);
 }
