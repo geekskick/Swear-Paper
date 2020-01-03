@@ -35,7 +35,7 @@ int main(int argc, const char *argv[]) {
     auto img_del = std::shared_ptr<image_delegate_b>{std::make_shared<image_delegate>(program_del)};
 
     auto swear_url = std::string{"https://raw.githubusercontent.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en"};
-    auto filename  = std::string{"default"};
+    auto filename = std::string{"default"};
 
     auto desc = po::options_description("Allowed Options");
     desc.add_options()("help,h", "Display help message")("source,s", po::value<std::string>(), "Specify the location of the swear word list")(
@@ -112,7 +112,7 @@ int main(int argc, const char *argv[]) {
     bool retry = false;
     std::string word{""};
     do {
-        if (get_image(d, e, raw_image,*json_string, idx, program_del)) {
+        if (get_image(d, e, raw_image, *json_string, idx, program_del)) {
             downloaded_image = image(raw_image, img_del, thickness);
             auto swear_copy{*swearwords};
 

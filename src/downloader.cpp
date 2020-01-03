@@ -79,9 +79,9 @@ std::optional<std::vector<std::string>> downloader::perform_vector(const std::st
         return {};
     };
 
-    std::string to;                 // used for iteration
-    std::stringstream stream(*reply_as_string);  // The big reply as a stringstream
-    std::vector<std::string> words; // the final vector
+    std::string to;                             // used for iteration
+    std::stringstream stream(*reply_as_string); // The big reply as a stringstream
+    std::vector<std::string> words;             // the final vector
 
     // iterate over the big string and put the lines into the 'to' variable, then
     // push that to the back of the vector
