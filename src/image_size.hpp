@@ -2,15 +2,24 @@
 #define IMAGE_SIZE_H
 
 #include <ostream>
+#include <sstream>
 
-class image_size {
-public:
-    int w;
-    int h;
+template<typename SizeType>
+struct image_size {
+
+    SizeType w;
+    SizeType h;
+
     friend std::ostream &operator<<(std::ostream &os, const image_size &sz) {
         os << "(w:" << sz.w << ", h: " << sz.h << ")";
         return os;
     }
-    std::string to_string() const;
+
+    std::string to_string() const{
+        std::stringstream ss;
+        ss << *this;
+        return ss.str();
+    }
 };
+
 #endif

@@ -38,16 +38,16 @@ void image::save_to_file(const std::string &filename) const {
 }
 
 bool image::word_fits(const std::string &word) const {
-    const image_size total_sz{word_location(word).x + text_size(word).w, word_location(word).y + text_size(word).h};
+    const auto total_sz = image_size<int>{word_location(word).x + text_size(word).w, word_location(word).y + text_size(word).h};
     return total_sz.w < m_image.cols && total_sz.h < m_image.rows;
 }
 
-image_size image::size() { return {m_image.cols, m_image.rows}; }
+image_size<int> image::size() { return {m_image.cols, m_image.rows}; }
 
 cv::Scalar image::text_colour(const std::string &word) const {
     // the location on the screen the text is going to go
-    const image_location word_loc{word_location(word)};
-    const image_size word_size{text_size(word)};
+    const auto word_loc = image_location{word_location(word)};
+    const auto word_size = image_size<int>{text_size(word)};
 
     // Create a rectanlge big enough for the word and at the same x and y co-ords
     // as it
@@ -92,7 +92,7 @@ image_location image::word_location(const std::string &word) const {
     return {(m_image.cols / 2) - (sz.w / 2), (m_image.rows / 2) - (sz.h / 2)};
 }
 
-image_size image::text_size(const std::string &word) const {
+image_size<int> image::text_size(const std::string &word) const {
     auto sz = cv::getTextSize(word, m_font, scale_factor(), m_line_thickness, nullptr);
     return {sz.width, sz.height};
 }

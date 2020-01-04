@@ -25,7 +25,7 @@ public:
     void put_text(const std::string &word);
     void save_to_file(const std::string &filename) const;
     bool word_fits(const std::string &word) const;
-    image_size size();
+    image_size<int> size();
 
 private:
     cv::Mat m_image;
@@ -36,7 +36,7 @@ private:
     cv::Scalar text_colour(const std::string &word) const;
     int scale_factor() const;
     image_location word_location(const std::string &word) const;
-    image_size text_size(const std::string &word) const;
+    image_size<int> text_size(const std::string &word) const;
 };
 
 #endif /* image_hpp */

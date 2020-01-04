@@ -1,4 +1,4 @@
-add_library(core STATIC downloader.cpp  downloader_delegate.cpp earthporn.cpp image.cpp image_delegate.cpp image_location.cpp image_size.cpp json_parse_delegate.cpp program_delegates.cpp)
+add_library(core STATIC downloader.cpp downloader_delegate.cpp earthporn.cpp image.cpp image_delegate.cpp image_location.cpp json_parse_delegate.cpp program_delegates.cpp)
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()

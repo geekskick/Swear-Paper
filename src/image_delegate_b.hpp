@@ -12,7 +12,7 @@ public:
     image_delegate_b(std::shared_ptr<program_delegate_b> &del) : m_del(del) {}
     virtual ~image_delegate_b(void) {}
 
-    virtual void image_info(const std::string &info, const image_size &sz) const = 0;
+    virtual void image_info(const std::string &info, const image_size<int> &sz) const = 0;
     virtual void image_put_text(const std::string &text, const image_location &loc) const = 0;
     virtual void image_saved(const std::string &fname) const = 0;
 
