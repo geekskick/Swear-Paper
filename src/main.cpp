@@ -5,7 +5,6 @@
 
 #include "boost/program_options.hpp"
 #include <cstddef>
-#include <iostream>
 #include <memory>
 #include <random>
 #include <string>
