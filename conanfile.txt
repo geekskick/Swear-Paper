@@ -3,6 +3,8 @@ nlohmann_json/3.7.3
 opencv/4.1.1@conan/stable
 boost/1.71.0@conan/stable
 libcurl/7.67.0
+fmt/6.1.1
+
 [options]
 opencv:openexr=False
 opencv:glog=False

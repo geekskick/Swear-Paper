@@ -125,10 +125,7 @@ std::optional<std::vector<char>> downloader::perform_image(const std::string &ur
     if (m_del) {
         m_del->download_ended(url);
     }
-
-    if(code == CURLE_OK){
-       return {}; 
-    }
+    check_rc(code, "curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &response_code)");
 
     return result;
 }

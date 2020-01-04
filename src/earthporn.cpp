@@ -20,4 +20,4 @@ std::string earthporn::get_url_from_reply(const std::string &json_to_parse, cons
 }
 
 // get the subreddit url
-std::string earthporn::get_sub_reddit_url() const { return m_url; }
+std::string_view earthporn::get_sub_reddit_url() const { return m_url; }

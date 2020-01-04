@@ -22,17 +22,6 @@
 
 namespace po = boost::program_options;
 namespace {
-std::optional<std::vector<char>> get_image(const downloader &d, const reddit_interface &e, const std::string &from_json,
-                                           const int idx, std::shared_ptr<program_delegate_b> &del) {
-
-    const auto url = e.get_url_from_reply(from_json, idx);
-    const auto rc = d.perform_image(url);
-
-    if (!rc) {
-        del->error("Error getting the image");
-    }
-    return rc;
-}
 
 int get_random_number(int max) {
     std::random_device rd;                          // only used once to initialise (seed) engine
@@ -67,7 +56,6 @@ int main(int argc, const char *argv[]) {
     }
 
     if (vm.count("quiet")) {
-        program_del->info("Changing to quiet mode, this is the last info message");
         program_del = std::make_shared<quiet_program_delegate>();
     }
 
@@ -115,19 +103,20 @@ int main(int argc, const char *argv[]) {
         exit(EXIT_SUCCESS);
     }
 
-    program_del->info("Getting image json from " + e.get_sub_reddit_url());
+    program_del->info(std::string{"Getting image json from "} + e.get_sub_reddit_url().data());
 
     // get the json as a string
-    const auto json_string = d.perform_string(e.get_sub_reddit_url());
+    const auto json_string = d.perform_string(e.get_sub_reddit_url().data());
     if (!json_string) {
         program_del->error("Unable to get JSON");
         exit(EXIT_FAILURE);
     }
 
-    const auto raw_image = get_image(d, e, *json_string, idx, program_del);
+    const auto url = e.get_url_from_reply(*json_string, idx);
+    const auto raw_image = d.perform_image(url);
 
     if (!raw_image) {
-        program_del->error("Something wrong with the image, stopping");
+        program_del->error("Error getting the image");
         exit(EXIT_FAILURE);
     }
 
