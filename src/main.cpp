@@ -25,21 +25,13 @@ namespace {
 std::optional<std::vector<char>> get_image(const downloader &d, const reddit_interface &e, const std::string &from_json,
                                            const int idx, std::shared_ptr<program_delegate_b> &del) {
 
-    auto dst = std::vector<char>{};
-    try {
-        const auto url = e.get_url_from_reply(from_json, idx);
+    const auto url = e.get_url_from_reply(from_json, idx);
+    const auto rc = d.perform_image(url);
 
-        const auto rc = d.perform_image(url, dst);
-        if (!rc.first) {
-            del->error(rc.second);
-            return {};
-        }
-    } catch (std::exception &e) {
-        del->error(e.what() + std::string("\tline: ") + std::to_string(__LINE__));
-        return {};
+    if (!rc) {
+        del->error("Error getting the image");
     }
-
-    return dst;
+    return rc;
 }
 
 int get_random_number(int max) {
@@ -50,7 +42,6 @@ int get_random_number(int max) {
 }
 } // namespace
 
-//---------- MAIN -----------
 int main(int argc, const char *argv[]) {
     auto program_del = std::shared_ptr<program_delegate_b>{std::make_shared<verbose_program_delegate>()};
 
@@ -134,6 +125,7 @@ int main(int argc, const char *argv[]) {
     }
 
     const auto raw_image = get_image(d, e, *json_string, idx, program_del);
+
     if (!raw_image) {
         program_del->error("Something wrong with the image, stopping");
         exit(EXIT_FAILURE);
@@ -171,6 +163,3 @@ int main(int argc, const char *argv[]) {
 
     downloaded_image.save_to_file(filename);
 }
-
-//--------------------
-

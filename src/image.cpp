@@ -18,12 +18,12 @@ image::image(std::shared_ptr<image_delegate_b> del, const int thick) : m_line_th
 image::image(const std::vector<char> &from, std::shared_ptr<image_delegate_b> del, const int thick)
     : m_image(cv::imdecode(from, -1)), m_line_thickness(thick), m_font(cv::FONT_HERSHEY_SCRIPT_COMPLEX), m_del(del) {
     if (m_del) {
-        m_del->image_info("xxx", size());
+        m_del->image_info("Dimensions", size());
     }
 }
 
 void image::put_text(const std::string &word) {
-    auto word_loc = word_location(word);
+    const auto word_loc = word_location(word);
     cv::putText(m_image, word, cv::Point(word_loc.x, word_loc.y), m_font, scale_factor(), text_colour(word), m_line_thickness);
     if (m_del) {
         m_del->image_put_text(word, word_loc);
@@ -38,16 +38,16 @@ void image::save_to_file(const std::string &filename) const {
 }
 
 bool image::word_fits(const std::string &word) const {
-    image_size total_sz{word_location(word).x + text_size(word).w, word_location(word).y + text_size(word).h};
+    const image_size total_sz{word_location(word).x + text_size(word).w, word_location(word).y + text_size(word).h};
     return total_sz.w < m_image.cols && total_sz.h < m_image.rows;
 }
 
-image_size image::size(void) { return {m_image.cols, m_image.rows}; }
+image_size image::size() { return {m_image.cols, m_image.rows}; }
 
 cv::Scalar image::text_colour(const std::string &word) const {
     // the location on the screen the text is going to go
-    image_location word_loc{word_location(word)};
-    image_size word_size{text_size(word)};
+    const image_location word_loc{word_location(word)};
+    const image_size word_size{text_size(word)};
 
     // Create a rectanlge big enough for the word and at the same x and y co-ords
     // as it
@@ -68,21 +68,21 @@ cv::Scalar image::text_colour(const std::string &word) const {
 
     // Get the number of pixels in the rectangle, then a count of this fully off
     // and those fully on
-    int numwhite = cv::countNonZero(grey);
-    int total = word_size.w * word_size.h;
-    int numBlack = total - numwhite;
+    const int numwhite = cv::countNonZero(grey);
+    const int total = word_size.w * word_size.h;
+    const int numBlack = total - numwhite;
 
     // if there are more white pixels, then I want the text on the image to be
     // black, to stand out. similarly if more white i want the text to be black
-    bool text_is_black = numwhite > numBlack;
+    const bool text_is_black = numwhite > numBlack;
 
     // return the rgb values for white or black
     return text_is_black ? cv::Scalar(0, 0, 0) : cv::Scalar(255, 255, 255);
 }
 
-int image::scale_factor(void) const {
-    int text_height{cv::getTextSize("f", m_font, 1, m_line_thickness, nullptr).height};
-    int text_width{cv::getTextSize("f", m_font, 1, m_line_thickness, nullptr).width};
+int image::scale_factor() const {
+    const int text_height{cv::getTextSize("f", m_font, 1, m_line_thickness, nullptr).height};
+    const int text_width{cv::getTextSize("f", m_font, 1, m_line_thickness, nullptr).width};
 
     return double(std::min(m_image.rows, m_image.cols) / 20.0) / double(std::max(text_height, text_width));
 }
