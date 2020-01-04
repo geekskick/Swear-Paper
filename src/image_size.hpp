@@ -11,6 +11,6 @@ public:
         os << "(w:" << sz.w << ", h: " << sz.h << ")";
         return os;
     }
-    std::string to_string(void) const;
+    std::string to_string() const;
 };
 #endif

@@ -11,7 +11,7 @@ public:
         os << "(x: " << loc.x << ", y: " << loc.y << ")";
         return os;
     }
-    std::string to_string(void) const;
+    std::string to_string() const;
 };
 
 #endif
