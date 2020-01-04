@@ -3,13 +3,13 @@
 //  Swear Paper
 //
 
-#include "boost/program_options.hpp"
 #include <cstddef>
 #include <memory>
 #include <random>
 #include <string>
 
 #include "ansi_codes.hpp"
+#include "boost/program_options.hpp"
 #include "downloader.hpp"
 #include "downloader_delegate.hpp"
 #include "earthporn.hpp"
@@ -94,12 +94,12 @@ int main(int argc, const char *argv[]) {
     auto swearwords = d.perform_vector(swear_url);
     if (!swearwords) {
         program_del->error("Unable to get swearwords");
-        exit(EXIT_SUCCESS);
+        exit(EXIT_FAILURE);
     }
 
     if (swearwords->empty()) {
         program_del->error("Swear words not populated");
-        exit(EXIT_SUCCESS);
+        exit(EXIT_FAILURE);
     }
 
     program_del->info(std::string{"Getting image json from "} + e.get_sub_reddit_url().data());
