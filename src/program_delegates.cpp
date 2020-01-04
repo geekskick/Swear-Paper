@@ -4,7 +4,7 @@
 #include "fmt/format.h"
 #include <iostream>
 
-verbose_program_delegate::~verbose_program_delegate(void) {
+verbose_program_delegate::~verbose_program_delegate() {
     fmt::print(ansi_codes::reset);
     fmt::print(stderr, ansi_codes::reset);
 }

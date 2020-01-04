@@ -7,7 +7,7 @@
 class json_parse_delegate_b {
 public:
     json_parse_delegate_b(std::shared_ptr<program_delegate_b> &prog_del) : m_del(prog_del) {}
-    virtual ~json_parse_delegate_b(void) {}
+    virtual ~json_parse_delegate_b() {}
     virtual void parse_result(const std::string &value) const = 0;
 
 protected:

@@ -7,7 +7,7 @@
 
 class downloader_delegate_b {
 public:
-    virtual ~downloader_delegate_b(void) {}
+    virtual ~downloader_delegate_b() {}
     downloader_delegate_b(std::shared_ptr<program_delegate_b> &prog_del) : m_del(prog_del) {}
 
     virtual void download_started(const std::string &url) = 0;

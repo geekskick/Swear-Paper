@@ -3,7 +3,7 @@
 class image_delegate : public image_delegate_b {
 public:
     explicit image_delegate(std::shared_ptr<program_delegate_b> &del) : image_delegate_b(del) {}
-    virtual ~image_delegate(void) {}
+    virtual ~image_delegate() {}
 
 
     void image_info(const std::string &info, const image_size<int> &sz) const override;
