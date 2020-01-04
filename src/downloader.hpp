@@ -18,9 +18,9 @@ public:
     explicit downloader(std::shared_ptr<downloader_delegate_b> delegate);
     ~downloader();
 
-    std::optional<std::string> perform_string(const std::string &url);
-    std::optional<std::vector<std::string>> perform_vector(const std::string &url);
-    std::pair<bool, std::string> perform_image(const std::string &url, std::vector<char> &result);
+    std::optional<std::string> perform_string(const std::string &url) const;
+    std::optional<std::vector<std::string>> perform_vector(const std::string &url) const;
+    std::pair<bool, std::string> perform_image(const std::string &url, std::vector<char> &result) const;
 
 private:
     void *m_curl; // curl object

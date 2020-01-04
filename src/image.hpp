@@ -20,7 +20,7 @@ public:
     image(image &rhs);
     image &operator=(image &rhs);
     image &operator=(image &&rhs);
-    image(std::vector<char> &from, std::shared_ptr<image_delegate_b> del, const int thick = 1);
+    image(const std::vector<char> &from, std::shared_ptr<image_delegate_b> del, const int thick = 1);
 
     void put_text(const std::string &word);
     void save_to_file(const std::string &filename) const;

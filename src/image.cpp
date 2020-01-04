@@ -15,7 +15,7 @@ image::image(image &rhs) : m_image(rhs.m_image), m_line_thickness(rhs.m_line_thi
 
 image::image(std::shared_ptr<image_delegate_b> del, const int thick) : m_line_thickness(thick), m_font(cv::FONT_HERSHEY_SCRIPT_COMPLEX), m_del(del) {}
 
-image::image(std::vector<char> &from, std::shared_ptr<image_delegate_b> del, const int thick)
+image::image(const std::vector<char> &from, std::shared_ptr<image_delegate_b> del, const int thick)
     : m_image(cv::imdecode(from, -1)), m_line_thickness(thick), m_font(cv::FONT_HERSHEY_SCRIPT_COMPLEX), m_del(del) {
     if (m_del) {
         m_del->image_info("xxx", size());

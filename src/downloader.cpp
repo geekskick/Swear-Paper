@@ -24,7 +24,7 @@ size_t downloader::write_data_to_string(void *ptr, size_t size, size_t nmemb, vo
 }
 
 // Do the download and get the reply as a string
-std::optional<std::string> downloader::perform_string(const std::string &url) {
+std::optional<std::string> downloader::perform_string(const std::string &url) const {
     CURLcode code; // error codes
 
     auto result = std::string{};
@@ -73,7 +73,7 @@ void downloader::check_rc(const CURLcode &rc, const std::string &msg) const {
 }
 
 // Do the download and get the reply as a vector of strings
-std::optional<std::vector<std::string>> downloader::perform_vector(const std::string &url) {
+std::optional<std::vector<std::string>> downloader::perform_vector(const std::string &url) const {
     const auto reply_as_string{perform_string(url)};
     if (!reply_as_string) {
         return {};
@@ -102,7 +102,7 @@ size_t downloader::write_data_to_vector(void *inptr, size_t size, size_t nmemb, 
 }
 
 // Do the download and get the reply as a vector of charactrers (image)!
-std::pair<bool, std::string> downloader::perform_image(const std::string &url, std::vector<char> &result) {
+std::pair<bool, std::string> downloader::perform_image(const std::string &url, std::vector<char> &result) const {
     CURLcode code;
 
     // connect to the url
