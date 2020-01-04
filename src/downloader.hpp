@@ -15,7 +15,7 @@
 class downloader {
 public:
     downloader();
-    explicit downloader(std::shared_ptr<downloader_delegate_b> delegate);
+    explicit downloader(std::unique_ptr<downloader_delegate_b> delegate);
     ~downloader();
 
     std::optional<std::string> perform_string(const std::string &url) const;
@@ -24,7 +24,7 @@ public:
 
 private:
     void *m_curl; // curl object
-    std::shared_ptr<downloader_delegate_b> m_del;
+    std::unique_ptr<downloader_delegate_b> m_del;
 
     // when data is recieved this function puts it into the stream
     static size_t write_data_to_string(void *ptr, size_t size, size_t nmemb, void *stream);

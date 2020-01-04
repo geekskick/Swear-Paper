@@ -3,6 +3,7 @@ add_library(core STATIC downloader.cpp downloader_delegate.cpp earthporn.cpp ima
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(swear_paper main.cpp)
 
 message(STATUS "Conan libs = ${CONAN_LIBS}")

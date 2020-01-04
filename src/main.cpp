@@ -33,10 +33,9 @@ int get_random_number(int max) {
 int main(int argc, const char *argv[]) {
     auto program_del = std::shared_ptr<program_delegate_b>{std::make_shared<verbose_program_delegate>()};
 
-    const auto download_del =
-        std::shared_ptr<downloader_delegate_b>{std::make_shared<downloader_delegate>(program_del)};
-    const auto parse_del = std::shared_ptr<json_parse_delegate_b>{std::make_shared<json_parse_delegate>(program_del)};
-    const auto img_del = std::shared_ptr<image_delegate_b>{std::make_shared<image_delegate>(program_del)};
+    auto download_del = std::unique_ptr<downloader_delegate_b>{std::make_unique<downloader_delegate>(program_del)};
+    auto parse_del = std::unique_ptr<json_parse_delegate_b>{std::make_unique<json_parse_delegate>(program_del)};
+    auto img_del = std::unique_ptr<image_delegate_b>{std::make_unique<image_delegate>(program_del)};
 
     auto desc = po::options_description("Allowed Options");
     desc.add_options()("help,h", "Display help message")("source,s", po::value<std::string>(),
@@ -87,8 +86,8 @@ int main(int argc, const char *argv[]) {
         return default_thickness;
     }();
 
-    const auto d = downloader{download_del};
-    const auto e = earthporn{parse_del};
+    const auto d = downloader{std::move(download_del)};
+    const auto e = earthporn{std::move(parse_del)};
 
     program_del->info("Getting swearwords from " + swear_url);
     auto swearwords = d.perform_vector(swear_url);
@@ -119,7 +118,7 @@ int main(int argc, const char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    auto downloaded_image = image(*raw_image, img_del, thickness);
+    auto downloaded_image = image(*raw_image, std::move(img_del), thickness);
     const auto word = [&]() {
         auto candidate = std::string{};
         do {

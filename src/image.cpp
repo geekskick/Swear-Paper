@@ -9,14 +9,10 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-image::image(const int thick) : m_line_thickness(thick), m_font(cv::FONT_HERSHEY_SCRIPT_COMPLEX) {}
 
-image::image(image &rhs) : m_image(rhs.m_image), m_line_thickness(rhs.m_line_thickness), m_font(rhs.m_font), m_del(rhs.m_del) {}
 
-image::image(std::shared_ptr<image_delegate_b> del, const int thick) : m_line_thickness(thick), m_font(cv::FONT_HERSHEY_SCRIPT_COMPLEX), m_del(del) {}
-
-image::image(const std::vector<char> &from, std::shared_ptr<image_delegate_b> del, const int thick)
-    : m_image(cv::imdecode(from, -1)), m_line_thickness(thick), m_font(cv::FONT_HERSHEY_SCRIPT_COMPLEX), m_del(del) {
+image::image(const std::vector<char> &from, std::unique_ptr<image_delegate_b> del, const int thick)
+    : m_image{cv::imdecode(from, -1)}, m_line_thickness{thick}, m_font{cv::FONT_HERSHEY_SCRIPT_COMPLEX}, m_del{std::move(del)} {
     if (m_del) {
         m_del->image_info("Dimensions", size());
     }
@@ -97,17 +93,3 @@ image_size<int> image::text_size(const std::string &word) const {
     return {sz.width, sz.height};
 }
 
-image &image::operator=(image &rhs) {
-    this->m_image = rhs.m_image;
-    this->m_line_thickness = rhs.m_line_thickness;
-    this->m_font = rhs.m_font;
-    this->m_del = rhs.m_del;
-    return *this;
-}
-image &image::operator=(image &&rhs) {
-    this->m_image = rhs.m_image;
-    this->m_line_thickness = rhs.m_line_thickness;
-    this->m_font = rhs.m_font;
-    this->m_del = rhs.m_del;
-    return *this;
-}

@@ -15,12 +15,9 @@
 
 class image {
 public:
-    image(std::shared_ptr<image_delegate_b> del, const int thick = 1);
-    explicit image(const int thick = 1);
-    image(image &rhs);
     image &operator=(image &rhs);
     image &operator=(image &&rhs);
-    image(const std::vector<char> &from, std::shared_ptr<image_delegate_b> del, const int thick = 1);
+    image(const std::vector<char> &from, std::unique_ptr<image_delegate_b> del, const int thick = 1);
 
     void put_text(const std::string &word);
     void save_to_file(const std::string &filename) const;
@@ -31,7 +28,7 @@ private:
     cv::Mat m_image;
     int m_line_thickness;
     int m_font;
-    std::shared_ptr<image_delegate_b> m_del;
+    std::unique_ptr<image_delegate_b> m_del;
 
     cv::Scalar text_colour(const std::string &word) const;
     int scale_factor() const;
