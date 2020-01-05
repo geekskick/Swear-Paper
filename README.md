@@ -5,30 +5,16 @@ A command line application to generate a new desktop wallpaper, using the newest
 
 ## Dependancies
 
-1. libcurl
-2. opencv (this works with 3.4.3!)
-3. nhollmans json header
-4. boost (program_options)
+See conanfile.txt
 
 ## Building
 
 ```bash
 mkdir build
+conan install --build=missing ..
+cmake ..
 make all
 ```
-or to run static analysis
-```
-make cppcheck
-```
-or to debug with lldb
-```
-make lldb
-```
-or to format the source using clang-format
-```
-make format
-```
-The release version is `swear_paper` and the debug version is `dswear_paper`.
 
 ## Usage
 
