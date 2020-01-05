@@ -1,3 +1,6 @@
+#ifndef IMAGE_DELEGATE_H 
+#define IMAGE_DELEGATE_H 
+
 #include "image_delegate_b.hpp"
 
 class image_delegate : public image_delegate_b {
@@ -8,3 +11,5 @@ public:
     void image_put_text(const std::string &text, const image_location &loc) const override;
     void image_saved(const std::string &text) const override;
 };
+
+#endif

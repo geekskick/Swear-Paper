@@ -1,16 +1,9 @@
-//
-//  earthporn.hpp
-//  Swear Paper
-//
-//
-
-#ifndef earthporn_hpp
-#define earthporn_hpp
+#ifndef EARTHPORN_HPP
+#define EARTHPORN_HPP
 
 #include "reddit_interface.hpp"
-#include <iostream>
+#include "nlohmann/json.hpp"
 #include <string_view>
-#include <nlohmann/json.hpp>
 
 //--------- EARTH PORN interface ----------
 class earthporn : public nlohmann::json, public reddit_interface {

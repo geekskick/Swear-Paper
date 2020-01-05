@@ -1,8 +1,4 @@
-//
-//  main.cpp
-//  Swear Paper
-//
-
+#include <iostream>
 #include <cstddef>
 #include <memory>
 #include <random>

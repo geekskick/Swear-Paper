@@ -1,3 +1,5 @@
+#ifndef PROGRAM_DELEGATES_H
+#define PROGRAM_DELEGATES_H
 #include "program_delegate_b.hpp"
 
 class verbose_program_delegate : public program_delegate_b {
@@ -13,3 +15,4 @@ class quiet_program_delegate : public verbose_program_delegate {
 public:
     void info(const std::string &msg) override;
 };
+#endif

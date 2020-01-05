@@ -1,22 +1,12 @@
-//
-//  image.hpp
-//  Swear Paper
-//
-
-#ifndef image_hpp
-#define image_hpp
+#ifndef IMAGE_HPP
+#define IMAGE_HPP
 
 #include <memory>
-#include <opencv2/core/core.hpp>
-#include <ostream>
-#include <sstream>
-
+#include "opencv2/core/core.hpp"
 #include "image_delegate_b.hpp"
 
 class image {
 public:
-    image &operator=(image &rhs);
-    image &operator=(image &&rhs);
     image(const std::vector<char> &from, std::unique_ptr<image_delegate_b> del, const int thick = 1);
 
     void put_text(const std::string &word);
@@ -36,4 +26,4 @@ private:
     image_size<int> text_size(const std::string &word) const;
 };
 
-#endif /* image_hpp */
+#endif 
