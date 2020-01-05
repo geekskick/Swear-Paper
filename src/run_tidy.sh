@@ -1,1 +1,1 @@
-clang-tidy -p ../build/ "-checks=modernize*" * "-header-filter=.*hpp"
+clang-tidy -p ../build/ "-checks=*" * "-header-filter=.*/src/.*hpp" &> tidy.output

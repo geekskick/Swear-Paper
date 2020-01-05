@@ -2,7 +2,7 @@
 
 class verbose_program_delegate : public program_delegate_b {
 public:
-    virtual ~verbose_program_delegate();
+    ~verbose_program_delegate() override;
 
     void info(const std::string &msg) override;
     void error(const std::string &msg) override;
