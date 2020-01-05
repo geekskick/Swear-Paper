@@ -1,4 +1,4 @@
 build/
 *.jpg
-swear_paper
-dswear_paper
+*.log
+
