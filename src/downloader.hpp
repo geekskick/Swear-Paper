@@ -1,10 +1,10 @@
 #ifndef DOWNLOADER_HPP
 #define DOWNLOADER_HPP
 
-#include "downloader_delegate_b.hpp"
 #include "curl/curl.h"
-#include <vector>
+#include "downloader_delegate_b.hpp"
 #include <optional>
+#include <vector>
 
 class downloader {
 public:
@@ -17,7 +17,7 @@ public:
     std::optional<std::vector<char>> perform_image(const std::string &url) const;
 
 private:
-    void *m_curl; 
+    void *m_curl;
     std::unique_ptr<downloader_delegate_b> m_del;
 
     static size_t write_data_to_string(void *ptr, size_t size, size_t nmemb, void *stream);

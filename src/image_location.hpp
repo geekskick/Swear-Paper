@@ -1,5 +1,5 @@
-#ifndef IMAGE_LOC_H
-#define IMAGE_LOC_H
+#ifndef IMAGE_LOC_HPP
+#define IMAGE_LOC_HPP
 
 #include <ostream>
 

@@ -1,5 +1,5 @@
-#ifndef DOWNLOAD_DEL_H
-#define DOWNLOAD_DEL_H
+#ifndef DOWNLOAD_DEL_HPP
+#define DOWNLOAD_DEL_HPP
 
 #include "downloader_delegate_b.hpp"
 

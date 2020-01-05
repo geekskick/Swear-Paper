@@ -9,10 +9,9 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-
-
 image::image(const std::vector<char> &from, std::unique_ptr<image_delegate_b> del, const int thick)
-    : m_image{cv::imdecode(from, -1)}, m_line_thickness{thick}, m_font{cv::FONT_HERSHEY_SCRIPT_COMPLEX}, m_del{std::move(del)} {
+    : m_image{cv::imdecode(from, -1)},
+      m_line_thickness{thick}, m_font{cv::FONT_HERSHEY_SCRIPT_COMPLEX}, m_del{std::move(del)} {
     if (m_del) {
         m_del->image_info("Dimensions", size());
     }
@@ -20,7 +19,8 @@ image::image(const std::vector<char> &from, std::unique_ptr<image_delegate_b> de
 
 void image::put_text(const std::string &word) {
     const auto word_loc = word_location(word);
-    cv::putText(m_image, word, cv::Point(word_loc.x, word_loc.y), m_font, scale_factor(), text_colour(word), m_line_thickness);
+    cv::putText(m_image, word, cv::Point(word_loc.x, word_loc.y), m_font, scale_factor(), text_colour(word),
+                m_line_thickness);
     if (m_del) {
         m_del->image_put_text(word, word_loc);
     }
@@ -34,7 +34,8 @@ void image::save_to_file(const std::string &filename) const {
 }
 
 bool image::word_fits(const std::string &word) const {
-    const auto total_sz = image_size<int>{word_location(word).x + text_size(word).w, word_location(word).y + text_size(word).h};
+    const auto total_sz =
+        image_size<int>{word_location(word).x + text_size(word).w, word_location(word).y + text_size(word).h};
     return total_sz.w < m_image.cols && total_sz.h < m_image.rows;
 }
 
@@ -92,4 +93,3 @@ image_size<int> image::text_size(const std::string &word) const {
     auto sz = cv::getTextSize(word, m_font, scale_factor(), m_line_thickness, nullptr);
     return {sz.width, sz.height};
 }
-

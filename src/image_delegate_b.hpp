@@ -1,5 +1,5 @@
-#ifndef IMAGE_DEL_H
-#define IMAGE_DEL_H
+#ifndef IMAGE_DEL_HPP
+#define IMAGE_DEL_HPP
 
 #include "image_location.hpp"
 #include "image_size.hpp"

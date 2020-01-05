@@ -1,5 +1,5 @@
-#ifndef IMAGE_DELEGATE_H 
-#define IMAGE_DELEGATE_H 
+#ifndef IMAGE_DELEGATE_HPP
+#define IMAGE_DELEGATE_HPP
 
 #include "image_delegate_b.hpp"
 

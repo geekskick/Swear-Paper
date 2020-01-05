@@ -1,5 +1,5 @@
-#ifndef DOWNLOADER_DEL_B_H
-#define DOWNLOADER_DEL_B_H
+#ifndef DOWNLOADER_DEL_B_HPP
+#define DOWNLOADER_DEL_B_HPP
 
 #include "program_delegate_b.hpp"
 #include <memory>

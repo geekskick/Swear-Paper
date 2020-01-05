@@ -1,5 +1,5 @@
-#ifndef PROGRAM_DELEGATES_H
-#define PROGRAM_DELEGATES_H
+#ifndef PROGRAM_DELEGATES_HPP
+#define PROGRAM_DELEGATES_HPP
 #include "program_delegate_b.hpp"
 
 class verbose_program_delegate : public program_delegate_b {

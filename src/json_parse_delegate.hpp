@@ -1,5 +1,5 @@
-#ifndef JSON_PARSE_DEL_H
-#define JSON_PARSE_DEL_H
+#ifndef JSON_PARSE_DEL_HPP
+#define JSON_PARSE_DEL_HPP
 
 #include "json_parse_delegate_b.hpp"
 #include <string>

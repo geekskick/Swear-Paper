@@ -1,9 +1,9 @@
 #ifndef IMAGE_HPP
 #define IMAGE_HPP
 
-#include <memory>
-#include "opencv2/core/core.hpp"
 #include "image_delegate_b.hpp"
+#include "opencv2/core/core.hpp"
+#include <memory>
 
 class image {
 public:
@@ -26,4 +26,4 @@ private:
     image_size<int> text_size(const std::string &word) const;
 };
 
-#endif 
+#endif

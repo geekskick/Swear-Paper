@@ -1,8 +1,8 @@
 #ifndef EARTHPORN_HPP
 #define EARTHPORN_HPP
 
-#include "reddit_interface.hpp"
 #include "nlohmann/json.hpp"
+#include "reddit_interface.hpp"
 #include <string_view>
 
 //--------- EARTH PORN interface ----------
@@ -15,7 +15,7 @@ public:
 private:
     // thi url gets the posts from earthporn in json formatted with the newest at
     // the top
-    constexpr static std::string_view m_url { "https://www.reddit.com/r/earthporn/new.json?sort=new"};
+    constexpr static std::string_view m_url{"https://www.reddit.com/r/earthporn/new.json?sort=new"};
 };
 
 #endif /* earthporn_hpp */

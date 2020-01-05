@@ -1,5 +1,5 @@
-#ifndef PROGRAM_DEL_B_H
-#define PROGRAM_DEL_B_H
+#ifndef PROGRAM_DEL_B_HPP
+#define PROGRAM_DEL_B_HPP
 
 #include <string>
 
