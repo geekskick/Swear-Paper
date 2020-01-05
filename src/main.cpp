@@ -125,9 +125,9 @@ int main(int argc, const char *argv[]) {
             swearwords->erase(swearwords->begin() + n);
             program_del->info("Word is:\t " + candidate);
 
-        } while (!downloaded_image.word_fits(candidate) && swearwords->size() > 0);
+        } while (!downloaded_image.word_fits(candidate) && !swearwords->empty());
 
-        if (swearwords->size() == 0) {
+        if (swearwords->empty()) {
             program_del->error("No more swear words left to try and fit on.");
             exit(EXIT_FAILURE);
         }

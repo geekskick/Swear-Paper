@@ -51,8 +51,8 @@ std::optional<std::string> downloader::perform_string(const std::string &url) co
 
     check_rc(code, "url_easy_perform(m_curl)");
 
-    long response_code = {0};
-    const long success = {200};
+    int64_t response_code = {0};
+    const int64_t success = {200};
     code = curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &response_code);
     check_rc(code, "curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &response_code)");
 
@@ -89,9 +89,10 @@ std::optional<std::vector<std::string>> downloader::perform_vector(const std::st
 
 // Callback for putting the data rx'd into a vector of chars
 size_t downloader::write_data_to_vector(void *inptr, size_t size, size_t nmemb, void *userdata) {
-    auto *ptr = static_cast<char *>(inptr);
+    const auto *ptr = static_cast<char *>(inptr);
+    const auto count = size * nmemb;
+
     auto *stream = static_cast<std::vector<char> *>(userdata);
-    auto count = size * nmemb;
     stream->insert(stream->end(), ptr, ptr + count);
     return count;
 }
@@ -100,14 +101,11 @@ size_t downloader::write_data_to_vector(void *inptr, size_t size, size_t nmemb, 
 std::optional<std::vector<char>> downloader::perform_image(const std::string &url) const {
     auto code = CURLcode{};
 
-    // connect to the url
     curl_easy_setopt(m_curl, CURLOPT_URL, url.c_str());
 
-    // when reply is recieved from the write function it goes to this call back
     curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, write_data_to_vector);
 
     auto result = std::vector<char>{};
-    // argument to send to the write callback
     curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &result);
 
     // do it!

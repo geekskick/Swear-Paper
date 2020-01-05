@@ -81,7 +81,7 @@ int image::scale_factor() const {
     const int text_height{cv::getTextSize("f", m_font, 1, m_line_thickness, nullptr).height};
     const int text_width{cv::getTextSize("f", m_font, 1, m_line_thickness, nullptr).width};
 
-    return double(std::min(m_image.rows, m_image.cols) / 20.0) / double(std::max(text_height, text_width));
+    return (std::min(m_image.rows, m_image.cols) / 20.0) / std::max(text_height, text_width);
 }
 
 image_location image::word_location(const std::string &word) const {

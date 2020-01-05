@@ -20,7 +20,7 @@ private:
     void *m_curl;
     std::unique_ptr<downloader_delegate_b> m_del;
 
-    static size_t write_data_to_string(void *ptr, size_t size, size_t nmemb, void *stream);
+    static size_t write_data_to_string(void *ptr, size_t size, size_t nmemb, void *userdata);
     static size_t write_data_to_vector(void *ptr, size_t size, size_t nmemb, void *stream);
     void check_rc(const CURLcode &rc, const std::string &msg) const;
 };
