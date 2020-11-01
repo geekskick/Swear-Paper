@@ -4,7 +4,8 @@
 #include <random>
 #include <string>
 
-#include "ansi_codes.hpp"
+#include "fmt/format.h"
+#include "fmt/ostream.h"
 #include "boost/program_options.hpp"
 #include "downloader.hpp"
 #include "downloader_delegate.hpp"
@@ -18,7 +19,7 @@
 namespace po = boost::program_options;
 namespace {
 
-int get_random_number(int max) {
+int get_random_number(const int max) {
     std::random_device rd;                          // only used once to initialise (seed) engine
     std::mt19937 rng(rd());                         // random-number engine used (Mersenne-Twister in this case)
     std::uniform_int_distribution<int> uni(0, max); // guaranteed unbiased
@@ -45,7 +46,7 @@ int main(int argc, const char *argv[]) {
     po::notify(vm);
 
     if (vm.count("help")) {
-        std::cout << desc << "\n";
+        fmt::print("{}\n", desc);;
         exit(EXIT_SUCCESS);
     }
 
