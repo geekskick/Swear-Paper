@@ -9,7 +9,6 @@ if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
 endif()
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
-
 conan_cmake_autodetect(settings)
 conan_cmake_run(CONANFILE ${PROJECT_SOURCE_DIR}/conanfile.txt
                 BASIC_SETUP 
@@ -24,7 +23,7 @@ message(STATUS "CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}")
 find_package(fmt 9.1.0 REQUIRED)
 find_package(Boost 1.71.0 REQUIRED COMPONENTS program_options)
 find_package(CURL 7.67.0 REQUIRED  )
-find_package(opencv 4.1.2 REQUIRED  )
+find_package(OpenCV 4.1.2 REQUIRED  )
 find_package(nlohmann_json 3.11.2 REQUIRED  )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -32,6 +31,7 @@ add_executable(swear_paper main.cpp)
 
 target_link_libraries(core PUBLIC fmt boost libcurl opencv nlohmann_json)
 target_link_libraries(swear_paper PRIVATE core ${CONAN_LIBS})
+set(_FLAGS -Wall -Wextra -Wpedantic -Werror -O0 -Wfatal-errors)
 
-target_compile_options(core PRIVATE -Wall -Wextra -Wpedantic -Werror -O3 -fno-rtti)
-target_compile_options(swear_paper PRIVATE -Wall -Wextra -Wpedantic -Werror -O3 -fno-rtti)
+target_compile_options(core PRIVATE ${_FLAGS})
+target_compile_options(swear_paper PRIVATE ${_FLAGS})

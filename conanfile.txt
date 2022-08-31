@@ -2,14 +2,18 @@
 nlohmann_json/3.11.2
 opencv/4.1.2
 boost/1.71.0
-libcurl/7.67.0
+libcurl/7.84.0
 fmt/9.1.0
 
 [options]
-opencv:with_openexr=False
-opencv:with_eigen=False
-opencv:with_webp=False
-opencv:with_quirc=False
+opencv:with_openexr = False
+opencv:with_eigen = False
+opencv:with_webp = False
+opencv:with_quirc = False
+opencv:with_gtk = False
+opencv:with_ffmpeg = False
+opencv:shared = False
+opencv:with_ade = False
 boost:without_atomic = True
 boost:without_chrono = True
 boost:without_container = True
