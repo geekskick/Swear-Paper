@@ -1,7 +1,7 @@
 #ifndef EARTHPORN_HPP
 #define EARTHPORN_HPP
 
-#include "nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 #include "reddit_interface.hpp"
 #include <string_view>
 

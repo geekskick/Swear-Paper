@@ -1,7 +1,7 @@
 #ifndef IMAGE_LOC_HPP
 #define IMAGE_LOC_HPP
 
-#include "fmt/format.h"
+#include <fmt/format.h>
 
 struct image_location {
     int x{};

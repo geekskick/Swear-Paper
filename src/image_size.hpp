@@ -1,7 +1,7 @@
 #ifndef IMAGE_SIZE_HPP
 #define IMAGE_SIZE_HPP
 
-#include "fmt/format.h"
+#include <fmt/format.h>
 
 template <typename SizeType> struct image_size {
 

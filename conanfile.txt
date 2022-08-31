@@ -1,21 +1,15 @@
 [requires]
-nlohmann_json/3.7.3
-opencv/4.1.1@conan/stable
-boost/1.71.0@conan/stable
+nlohmann_json/3.11.2
+opencv/4.1.2
+boost/1.71.0
 libcurl/7.67.0
-fmt/6.1.1
+fmt/9.1.0
 
 [options]
-opencv:openexr=False
-opencv:glog=False
-opencv:eigen=False
-opencv:harfbuzz=False
-opencv:freetype=False
-opencv:protobuf=False
-opencv:jasper=False
-opencv:webp=False
-opencv:dc1394=False
-opencv:quirc=False
+opencv:with_openexr=False
+opencv:with_eigen=False
+opencv:with_webp=False
+opencv:with_quirc=False
 boost:without_atomic = True
 boost:without_chrono = True
 boost:without_container = True
@@ -49,4 +43,5 @@ boost:zlib = False
 
 
 [generators]
-cmake
+cmake_find_package
+cmake_paths

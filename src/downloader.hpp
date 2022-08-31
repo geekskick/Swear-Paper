@@ -1,7 +1,7 @@
 #ifndef DOWNLOADER_HPP
 #define DOWNLOADER_HPP
 
-#include "curl/curl.h"
+#include <curl/curl.h>
 #include "downloader_delegate_b.hpp"
 #include <optional>
 #include <vector>

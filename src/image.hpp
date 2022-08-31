@@ -2,7 +2,7 @@
 #define IMAGE_HPP
 
 #include "image_delegate_b.hpp"
-#include "opencv2/core/core.hpp"
+#include <opencv2/core/core.hpp>
 #include <memory>
 
 class image {
