@@ -1,11 +1,7 @@
 #include <cstddef>
-#include <iostream>
 #include <memory>
 #include <random>
 #include <string>
-
-#include <fmt/format.h>
-#include <fmt/ostream.h>
 #include <boost/program_options.hpp>
 #include "downloader.hpp"
 #include "downloader_delegate.hpp"
@@ -15,6 +11,7 @@
 #include "json_parse_delegate.hpp"
 #include "program_delegates.hpp"
 #include "reddit_interface.hpp"
+#include <fmt/ostream.h>
 
 namespace po = boost::program_options;
 namespace {
@@ -27,6 +24,8 @@ int get_random_number(const int max) {
 }
 } // namespace
 
+template <> struct fmt::formatter<po::options_description> : ostream_formatter {};
+
 int main(int argc, const char *argv[]) {
     auto program_del = std::shared_ptr<program_delegate_b>{std::make_shared<verbose_program_delegate>()};
 
@@ -35,18 +34,21 @@ int main(int argc, const char *argv[]) {
     auto img_del = std::unique_ptr<image_delegate_b>{std::make_unique<image_delegate>(program_del)};
 
     auto desc = po::options_description("Allowed Options");
-    desc.add_options()("help,h", "Display help message")("source,s", po::value<std::string>(),
-                                                         "Specify the location of the swear word list")(
-        "output,o", po::value<std::string>(), "Output filename")("quiet,q", "Don't show info messages")(
-        "skip", po::value<int>(), "Skip to the nth image in the list of available ones")(
-        "thickness", po::value<int>(), "Thickness of the line used to print the word");
+    //clang-format off
+    desc.add_options()
+        ("help,h", "Display help message")
+        ("source,s", po::value<std::string>(), "Specify the location of the swear word list")
+        ( "output,o", po::value<std::string>(), "Output filename")("quiet,q", "Don't show info messages")
+        ( "skip", po::value<int>(), "Skip to the nth image in the list of available ones")
+        ( "thickness", po::value<int>(), "Thickness of the line used to print the word");
+    //clang-format on
 
     auto vm = po::variables_map();
     po::store(po::parse_command_line(argc, argv, desc), vm);
     po::notify(vm);
 
     if (vm.count("help")) {
-        fmt::print("{}\n", desc);;
+        fmt::print("{}\n", desc);
         exit(EXIT_SUCCESS);
     }
 

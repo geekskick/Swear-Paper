@@ -3,6 +3,7 @@
 
 #include "program_delegate_b.hpp"
 #include <string>
+#include <memory>
 
 class json_parse_delegate_b {
 public:
