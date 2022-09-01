@@ -29,8 +29,8 @@ find_package(nlohmann_json 3.11.2 REQUIRED  )
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(swear_paper main.cpp)
 
-target_link_libraries(core PUBLIC fmt boost libcurl opencv nlohmann_json)
-target_link_libraries(swear_paper PRIVATE core ${CONAN_LIBS})
+target_link_libraries(core PUBLIC fmt Boost::program_options CURL::libcurl ${OpenCV_LIBS} nlohmann_json::nlohmann_json)
+target_link_libraries(swear_paper PRIVATE core)
 set(_FLAGS -Wall -Wextra -Wpedantic -Werror -O0 -Wfatal-errors)
 
 target_compile_options(core PRIVATE ${_FLAGS})
