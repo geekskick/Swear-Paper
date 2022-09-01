@@ -25,11 +25,17 @@ find_package(Boost 1.71.0 REQUIRED COMPONENTS program_options)
 find_package(CURL 7.67.0 REQUIRED  )
 find_package(OpenCV 4.1.2 REQUIRED  )
 find_package(nlohmann_json 3.11.2 REQUIRED  )
-
+message(STATUS "OpenCV libs = ${OpenCV_LIBS}")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(swear_paper main.cpp)
 
-target_link_libraries(core PUBLIC fmt Boost::program_options CURL::libcurl ${OpenCV_LIBS} nlohmann_json::nlohmann_json)
+target_link_libraries(core PUBLIC 
+       fmt::fmt 
+       Boost::program_options 
+       CURL::libcurl 
+       opencv::opencv_core 
+       opencv::opencv_imgcodecs
+       nlohmann_json::nlohmann_json)
 target_link_libraries(swear_paper PRIVATE core)
 set(_FLAGS -Wall -Wextra -Wpedantic -Werror -O0 -Wfatal-errors)
 
