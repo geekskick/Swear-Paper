@@ -2,4 +2,4 @@ build/
 *.jpg
 *.log
 *.output
-
+.vscode/

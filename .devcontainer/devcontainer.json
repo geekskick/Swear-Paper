@@ -1,0 +1,16 @@
+{
+    "dockerFile": "../docker/Dockerfile",
+    "name": "swear_paper_image",
+    "extensions": [
+        "ms-vscode.cmake-tools",
+        "ms-vscode.cpptools",
+        "xaver.clang-format",
+        "oderwat.indent-rainbow",
+        "vscodevim.vim",
+        "matepek.vscode-catch2-test-adapter"
+    ],
+    "mounts": ["source=gcc-conan,target=/conan,type=volume"],
+    "containerEnv": {
+        "CONAN_USER_HOME": "/conan"
+    }
+}
