@@ -4,10 +4,10 @@
 #include <string>
 
 class program_delegate_b {
-public:
-    virtual ~program_delegate_b() = default;
-    virtual void info(const std::string &msg) const = 0;
-    virtual void error(const std::string &msg) const = 0;
-    virtual void success(const std::string &msg) const = 0;
+ public:
+  virtual ~program_delegate_b() = default;
+  virtual void info(const std::string &msg) const = 0;
+  virtual void error(const std::string &msg) const = 0;
+  virtual void success(const std::string &msg) const = 0;
 };
 #endif

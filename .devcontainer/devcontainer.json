@@ -9,7 +9,9 @@
         "vscodevim.vim",
         "matepek.vscode-catch2-test-adapter"
     ],
-    "mounts": ["source=gcc-conan,target=/conan,type=volume"],
+    "mounts": [
+        "source=gcc-conan,target=/conan,type=volume"
+    ],
     "containerEnv": {
         "CONAN_USER_HOME": "/conan"
     }
