@@ -8,8 +8,7 @@
 
 class image {
  public:
-  image(const std::vector<char> &from, std::unique_ptr<image_delegate_b> del,
-        const int thick = 1);
+  image(const std::vector<char> &from, std::unique_ptr<image_delegate_b> del, const int thick = 1);
 
   void put_text(const std::string &word);
   void save_to_file(const std::string &filename) const;

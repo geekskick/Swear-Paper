@@ -10,14 +10,11 @@
 
 class image_delegate_b {
  public:
-  image_delegate_b(std::shared_ptr<program_delegate_b> del)
-      : m_del{std::move(del)} {}
+  image_delegate_b(std::shared_ptr<program_delegate_b> del) : m_del{std::move(del)} {}
   virtual ~image_delegate_b() = default;
 
-  virtual void image_info(const std::string &info,
-                          const image_size<int> &sz) const = 0;
-  virtual void image_put_text(const std::string &text,
-                              const image_location &loc) const = 0;
+  virtual void image_info(const std::string &info, const image_size<int> &sz) const = 0;
+  virtual void image_put_text(const std::string &text, const image_location &loc) const = 0;
   virtual void image_saved(const std::string &fname) const = 0;
 
  protected:

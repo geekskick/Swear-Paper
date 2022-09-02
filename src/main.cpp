@@ -30,15 +30,10 @@ template <>
 struct fmt::formatter<po::options_description> : ostream_formatter {};
 
 int main(int argc, const char *argv[]) {
-  auto program_del = std::shared_ptr<program_delegate_b>{
-      std::make_shared<verbose_program_delegate>()};
-
-  auto download_del = std::unique_ptr<downloader_delegate_b>{
-      std::make_unique<downloader_delegate>(program_del)};
-  auto parse_del = std::unique_ptr<json_parse_delegate_b>{
-      std::make_unique<json_parse_delegate>(program_del)};
-  auto img_del = std::unique_ptr<image_delegate_b>{
-      std::make_unique<image_delegate>(program_del)};
+  auto program_del = std::shared_ptr<program_delegate_b>{new verbose_program_delegate{}};
+  auto download_del = std::unique_ptr<downloader_delegate_b>{new downloader_delegate{program_del}};
+  auto parse_del = std::unique_ptr<json_parse_delegate_b>{new json_parse_delegate{program_del}};
+  auto img_del = std::unique_ptr<image_delegate_b>{new image_delegate{program_del}};
 
   auto desc = po::options_description("Allowed Options");
 
@@ -79,8 +74,7 @@ int main(int argc, const char *argv[]) {
     const auto default_idx = 0;
     if (vm.count("skip")) {
       const auto rc = vm["skip"].as<int>();
-      program_del->info("Skipping to the " + std::to_string(rc + 1) +
-                        "th item in the list of images");
+      program_del->info("Skipping to the " + std::to_string(rc + 1) + "th item in the list of images");
       return rc;
     }
     return default_idx;
@@ -111,8 +105,7 @@ int main(int argc, const char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  program_del->info(std::string{"Getting image json from "} +
-                    e.get_sub_reddit_url().data());
+  program_del->info(std::string{"Getting image json from "} + e.get_sub_reddit_url().data());
 
   // get the json as a string
   const auto json_string = d.perform_string(e.get_sub_reddit_url().data());
@@ -133,8 +126,7 @@ int main(int argc, const char *argv[]) {
   const auto word = [&]() {
     auto candidate = std::string{};
     do {
-      const auto n =
-          get_random_number(static_cast<int>(swearwords->size() - 1));
+      const auto n = get_random_number(static_cast<int>(swearwords->size() - 1));
       candidate = swearwords->at(n);
       // remove it from the list so that it doesnt get selected again if it's
       // too big

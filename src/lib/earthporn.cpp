@@ -5,8 +5,7 @@
 
 #include "earthporn.hpp"
 
-std::string earthporn::get_url_from_reply(const std::string &json_to_parse,
-                                          const int idx = 0) const {
+std::string earthporn::get_url_from_reply(const std::string &json_to_parse, const int idx = 0) const {
   // this might throw an exception
   const auto j = nlohmann::json{parse(json_to_parse)};
 

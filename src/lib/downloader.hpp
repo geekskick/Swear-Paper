@@ -15,18 +15,15 @@ class downloader {
   ~downloader();
 
   std::optional<std::string> perform_string(const std::string &url) const;
-  std::optional<std::vector<std::string>> perform_vector(
-      const std::string &url) const;
+  std::optional<std::vector<std::string>> perform_vector(const std::string &url) const;
   std::optional<std::vector<char>> perform_image(const std::string &url) const;
 
  private:
   void *m_curl;
   std::unique_ptr<downloader_delegate_b> m_del;
 
-  static size_t write_data_to_string(void *ptr, size_t size, size_t nmemb,
-                                     void *userdata);
-  static size_t write_data_to_vector(void *ptr, size_t size, size_t nmemb,
-                                     void *stream);
+  static size_t write_data_to_string(void *ptr, size_t size, size_t nmemb, void *userdata);
+  static size_t write_data_to_vector(void *ptr, size_t size, size_t nmemb, void *stream);
   void check_rc(const CURLcode &rc, const std::string &msg) const;
 };
 
