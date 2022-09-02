@@ -5,15 +5,15 @@ A command line application to generate a new desktop wallpaper, using the newest
 
 ## Dependancies
 
-See conanfile.txt
+Basically just docker, but if you want to know more then: 
+See [conafile](conanfile.txt) and [dockerfile](./docker/Dockerfile).
 
 ## Building
 
 ```bash
-mkdir build
-conan install --build=missing ..
-cmake ..
-make all
+docker build -t swear_paper ./docker 
+./rundocker.sh cmake -Bbuild . 
+./rundocker.sh cmake --build build --target all
 ```
 
 ## Usage
@@ -21,12 +21,16 @@ make all
 ```bash
 ./swear_paper <option>
 Allowed Options:
-  -h [ --help ]         Display help message
-  -s [ --source ] arg   Specify the location of the swear word list
-  -o [ --output ] arg   Output filename
-  -q [ --quiet ]        Don't show info messages
-  --skip arg            Skip to the nth image in the list of available ones
-  --thickness arg       Thickness of the line used to print the word
+  -h [ --help ]                         Display help message
+  -s [ --source ] arg (=https://raw.githubusercontent.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en)
+                                        Specify the location of the swear word 
+                                        list
+  -o [ --output ] arg                   Output filename
+  -q [ --quiet ]                        Don't show info messages
+  --skip arg (=0)                       Skip to the nth image in the list of 
+                                        available ones
+  --thickness arg (=1)                  Thickness of the line used to print the
+                                        word
 ```
 
 ## Results
