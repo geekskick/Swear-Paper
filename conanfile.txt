@@ -4,6 +4,7 @@ opencv/4.1.2
 boost/1.71.0
 libcurl/7.84.0
 fmt/9.1.0
+gtest/1.12.1
 
 [options]
 fmt:header_only = True
