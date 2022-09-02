@@ -39,11 +39,13 @@ int main(int argc, const char *argv[]) {
   // clang-format off
   desc.add_options()
     ("help,h", "Display help message")
-    ("source,s", po::value<std::string>(), "Specify the location of the swear word list")
+    ("source,s", po::value<std::string>()->default_value(
+                                                    "https://raw.githubusercontent.com/LDNOOBW/"
+                                                    "List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en"), "Specify the location of the swear word list")
     ("output,o", po::value<std::string>(), "Output filename")
     ("quiet,q", "Don't show info messages")
-    ("skip", po::value<int>(), "Skip to the nth image in the list of available ones")
-    ("thickness", po::value<int>(), "Thickness of the line used to print the word");
+    ("skip", po::value<int>()->default_value(0), "Skip to the nth image in the list of available ones")
+    ("thickness", po::value<int>()->default_value(1), "Thickness of the line used to print the word");
   // clang-format on
 
   auto vm = po::variables_map();
@@ -59,35 +61,9 @@ int main(int argc, const char *argv[]) {
     program_del = std::make_shared<quiet_program_delegate>();
   }
 
-  const auto swear_url = [&]() {
-    const auto default_url = std::string{
-        "https://raw.githubusercontent.com/LDNOOBW/"
-        "List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en"};
-    if (vm.count("source")) {
-      return vm["source"].as<std::string>();
-    }
-    return default_url;
-  }();
-
-  const auto idx = [&]() {
-    const auto default_idx = 0;
-    if (vm.count("skip")) {
-      const auto rc = vm["skip"].as<int>();
-      program_del->info("Skipping to the " + std::to_string(rc + 1) + "th item in the list of images");
-      return rc;
-    }
-    return default_idx;
-    ;
-  }();
-
-  const auto thickness = [&]() {
-    const auto default_thickness = 1;
-    if (vm.count("thickness")) {
-      const auto rc = vm["thickness"].as<int>();
-      program_del->info("Setting the line thickness to " + std::to_string(rc));
-    }
-    return default_thickness;
-  }();
+  const auto swear_url = vm["source"].as<std::string>();
+  const auto idx = vm["skip"].as<int>();
+  const auto thickness = vm["thickness"].as<int>();
 
   const auto d = downloader{std::move(download_del)};
   const auto e = earthporn{std::move(parse_del)};

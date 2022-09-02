@@ -58,6 +58,7 @@ target_link_libraries(core PUBLIC
 
 target_link_libraries(swear_paper PRIVATE core)
 
+
 set(_FLAGS -Wall -Wextra -Wpedantic -Werror -O0 -Wfatal-errors)
 
 target_compile_features(core PUBLIC cxx_std_17)
