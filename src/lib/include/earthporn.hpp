@@ -4,7 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <string_view>
 
-#include "reddit_interface.hpp"
+#include "interfaces/reddit_interface.hpp"
 
 //--------- EARTH PORN interface ----------
 class earthporn : public nlohmann::json, public reddit_interface {

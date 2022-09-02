@@ -1,26 +1,26 @@
 add_library(core STATIC 
        lib/downloader.cpp
-       lib/downloader.hpp
+       lib/include/downloader.hpp
        lib/downloader_delegate.cpp
-       lib/downloader_delegate.hpp
-       lib/downloader_delegate_b.hpp
+       lib/include/downloader_delegate.hpp
+       lib/include/interfaces/downloader_delegate_b.hpp
        lib/earthporn.cpp
-       lib/earthporn.hpp
+       lib/include/earthporn.hpp
        lib/image.cpp
-       lib/image.hpp
+       lib/include/image.hpp
        lib/image_delegate.cpp
-       lib/image_delegate.hpp
-       lib/image_delegate_b.hpp
-       lib/image_location.hpp
-       lib/image_size.hpp
+       lib/include/image_delegate.hpp
+       lib/include/interfaces/image_delegate_b.hpp
+       lib/include/image_location.hpp
+       lib/include/image_size.hpp
        lib/json_parse_delegate.cpp
-       lib/json_parse_delegate.hpp
-       lib/json_parse_delegate_b.hpp
-       lib/program_delegate_b.hpp
+       lib/include/json_parse_delegate.hpp
+       lib/include/interfaces/json_parse_delegate_b.hpp
+       lib/include/interfaces/program_delegate_b.hpp
        lib/program_delegates.cpp
-       lib/program_delegates.hpp
-       lib/reddit_interface.hpp)
-target_include_directories(core PUBLIC lib/)
+       lib/include/program_delegates.hpp
+       lib/include/interfaces/reddit_interface.hpp)
+target_include_directories(core PUBLIC lib/include)
 
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
   message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")

@@ -1,14 +1,10 @@
-//
-//  image.cpp
-//  Swear Paper
-//
+#include "include/image.hpp"
 
-#include "image.hpp"
-
-#include <iostream>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#include <algorithm>              // for max, min
+#include <opencv2/core.hpp>       // for countNonZero
+#include <opencv2/imgcodecs.hpp>  // for imdecode, imwrite
+#include <opencv2/imgproc.hpp>    // for getTextSize, cvtColor, putText, thr...
+#include <utility>                // for move
 
 image::image(const std::vector<char> &from, std::unique_ptr<image_delegate_b> del, const int thick) : m_image{cv::imdecode(from, -1)}, m_line_thickness{thick}, m_font{cv::FONT_HERSHEY_SCRIPT_COMPLEX}, m_del{std::move(del)} {
   if (m_del) {

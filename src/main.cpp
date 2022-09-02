@@ -13,7 +13,6 @@
 #include "image_delegate.hpp"
 #include "json_parse_delegate.hpp"
 #include "program_delegates.hpp"
-#include "reddit_interface.hpp"
 
 namespace po = boost::program_options;
 namespace {

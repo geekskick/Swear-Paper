@@ -1,9 +1,4 @@
-//
-//  downloader.cpp
-//  Swear Paper
-//
-
-#include "downloader.hpp"
+#include "include/downloader.hpp"
 
 #include <curl/easy.h>
 

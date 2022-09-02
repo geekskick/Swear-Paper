@@ -1,7 +1,14 @@
 #ifndef IMAGE_DELEGATE_HPP
 #define IMAGE_DELEGATE_HPP
 
-#include "image_delegate_b.hpp"
+#include <memory>  // for shared_ptr
+#include <string>  // for string
+
+#include "interfaces/image_delegate_b.hpp"  // for image_delegate_b
+class program_delegate_b;
+struct image_location;
+template <typename SizeType>
+struct image_size;
 
 class image_delegate : public image_delegate_b {
  public:

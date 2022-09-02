@@ -1,7 +1,8 @@
-#include "program_delegates.hpp"
+#include "include/program_delegates.hpp"
 
-#include <fmt/color.h>
-#include <fmt/format.h>
+#include <fmt/color.h>  // for fg, print, color, color::blue, color::green
+#include <fmt/core.h>   // for basic_string_view, print
+#include <stdio.h>      // for stderr
 
 void verbose_program_delegate::info(const std::string &msg) const {
   fmt::print(fmt::fg(fmt::color::blue), "[INFO]\t");

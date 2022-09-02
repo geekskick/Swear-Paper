@@ -1,10 +1,16 @@
 #ifndef IMAGE_HPP
 #define IMAGE_HPP
 
-#include <memory>
-#include <opencv2/core/core.hpp>
+#include <memory>                    // for unique_ptr
+#include <opencv2/core/mat.hpp>      // for Mat
+#include <opencv2/core/mat.inl.hpp>  // for Mat::~Mat
+#include <opencv2/core/types.hpp>    // for Scalar
+#include <string>                    // for string
+#include <vector>                    // for vector
 
-#include "image_delegate_b.hpp"
+#include "image_location.hpp"               // for image_location
+#include "image_size.hpp"                   // for image_size
+#include "interfaces/image_delegate_b.hpp"  // for image_delegate_b
 
 class image {
  public:

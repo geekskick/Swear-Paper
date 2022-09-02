@@ -1,6 +1,8 @@
 #ifndef PROGRAM_DELEGATES_HPP
 #define PROGRAM_DELEGATES_HPP
-#include "program_delegate_b.hpp"
+#include <string>  // for string
+
+#include "interfaces/program_delegate_b.hpp"  // for program_delegate_b
 
 class verbose_program_delegate : public program_delegate_b {
  public:

@@ -1,9 +1,4 @@
-//
-//  earthporn.cpp
-//  Swear Paper
-//
-
-#include "earthporn.hpp"
+#include "include/earthporn.hpp"
 
 std::string earthporn::get_url_from_reply(const std::string &json_to_parse, const int idx = 0) const {
   // this might throw an exception

@@ -6,7 +6,7 @@
 #include <optional>
 #include <vector>
 
-#include "downloader_delegate_b.hpp"
+#include "interfaces/downloader_delegate_b.hpp"
 
 class downloader {
  public:
