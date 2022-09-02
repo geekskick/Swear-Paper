@@ -1,6 +1,7 @@
 #include "include/downloader.hpp"
 
 #include <curl/easy.h>
+#include <fmt/format.h>
 
 #include <sstream>
 
@@ -45,7 +46,7 @@ std::optional<std::string> downloader::perform_string(const std::string &url) co
     m_del->download_ended(url);
   }
 
-  check_rc(code, "url_easy_perform(m_curl)");
+  check_rc(code, "url_easy_perform(m_curl):" + url);
 
   int64_t response_code = {0};
   const int64_t success = {200};
@@ -61,7 +62,8 @@ std::optional<std::string> downloader::perform_string(const std::string &url) co
 
 void downloader::check_rc(const CURLcode &rc, const std::string &msg) const {
   if (CURLE_OK != rc) {
-    throw std::runtime_error(std::string(msg + std::string(": ") + std::string(curl_easy_strerror(rc))));
+    const auto full_msg = fmt::format("{}: {}", msg, curl_easy_strerror(rc));
+    throw std::runtime_error(full_msg);
   }
 }
 

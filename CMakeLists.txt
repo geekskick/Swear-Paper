@@ -61,6 +61,8 @@ target_compile_options(swear_paper PRIVATE ${_FLAGS})
 
 find_package(GTest REQUIRED)
 add_executable(swear_paper_test
+    test/expected_reply.hpp
     test/earthporn_json_parse_test.cpp
+    test/downloader_test.cpp
     )
 target_link_libraries(swear_paper_test PRIVATE core GTest::gtest_main GTest::gmock)
