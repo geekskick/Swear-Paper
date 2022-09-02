@@ -33,15 +33,15 @@ Allowed Options:
                                         word
 ```
 
-## Results
-![alt text](Results/assfukka.jpg "assfukka")
-![alt text](Results/cunts.jpg "cunts")
-![alt text](Results/fekker.jpg "fekker")
-![alt text](Results/fagging.jpg "fagging")
-![alt text](Results/motherfuckers.jpg "motherfuckers")
-![alt text](Results/buttplug.jpg "buttplug")
-![alt text](Results/testicles.jpg "grope")
-![alt text](Results/blue_waffle.jpg "blue waffle")
-![alt text](Results/bitches.jpg "bitches")
-![alt text](Results/jelly_donut.jpg "jelly donut")
+## results
+![alt text](results/assfukka.jpg "assfukka")
+![alt text](results/cunts.jpg "cunts")
+![alt text](results/fekker.jpg "fekker")
+![alt text](results/fagging.jpg "fagging")
+![alt text](results/motherfuckers.jpg "motherfuckers")
+![alt text](results/buttplug.jpg "buttplug")
+![alt text](results/testicles.jpg "grope")
+![alt text](results/blue_waffle.jpg "blue waffle")
+![alt text](results/bitches.jpg "bitches")
+![alt text](results/jelly_donut.jpg "jelly donut")
 

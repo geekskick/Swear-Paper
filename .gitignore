@@ -3,3 +3,4 @@ build/
 *.log
 *.output
 .vscode/
+!results/*.jpg
