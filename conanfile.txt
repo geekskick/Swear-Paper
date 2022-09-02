@@ -6,6 +6,7 @@ libcurl/7.84.0
 fmt/9.1.0
 
 [options]
+fmt:header_only = True
 opencv:with_openexr = False
 opencv:with_eigen = False
 opencv:with_webp = False

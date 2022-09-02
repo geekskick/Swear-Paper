@@ -1,6 +1,12 @@
 project(swear_paper_proj)
-set(CMAKE_CXX_STANDARD 17)
+cmake_minimum_required(VERSION 3.12)
+
+if(COMMAND cmake_policy)
+    cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 add_subdirectory(src)
 
-cmake_minimum_required(VERSION 3.12)
