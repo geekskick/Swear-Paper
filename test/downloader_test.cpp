@@ -21,14 +21,33 @@ struct mock_delegate : public downloader_delegate_b {
   MOCK_METHOD(void, download_ended, (const std::string &), (override));
 };
 
-struct Server {
+struct HTTPOneShotServer {
+  struct HTTPOptions {
+    std::string_view http_return_code{"200 OK"};
+    std::string_view http_version{"1.1"};
+    // https://stackoverflow.com/questions/53408962/try-to-understand-compiler-error-message-default-member-initializer-required-be
+    constexpr HTTPOptions();
+    constexpr HTTPOptions &with_return_code(std::string_view code) {
+      http_return_code = code;
+      return *this;
+    }
+    constexpr HTTPOptions &with_version(std::string_view version) {
+      http_version = version;
+      return *this;
+    }
+  };
+  [[nodiscard]] bool is_listening() const { return listening; }
+  HTTPOneShotServer(size_t port, std::string_view data, HTTPOptions options = HTTPOneShotServer::HTTPOptions())
+      : data{std::move(data)}, port{std::move(port)}, s{std::thread{&HTTPOneShotServer::serve, this, data}}, options{std::move(options)} {}
+  ~HTTPOneShotServer() { s.join(); }
+
+ private:
   std::string_view data{};
   size_t port{};
   std::thread s{};
   mutable std::atomic_bool listening{false};
-  Server(size_t port, std::string_view data) : data{std::move(data)}, port{std::move(port)} { s = std::thread{&Server::serve, this, data}; }
+  HTTPOptions options{};
 
-  ~Server() { s.join(); }
   int serve(const std::string_view data) const {
     const auto sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1) {
@@ -66,13 +85,13 @@ struct Server {
     // Read from the connection
     constexpr auto buffer_size = 100;
     char buffer[buffer_size];
-    const auto bytesRead = read(connection, buffer, buffer_size);
+    const auto bytes_read = read(connection, buffer, buffer_size);
 
     const auto http_message = fmt::format(
-        "HTTP/1.1 200 OK\r\n"
+        "HTTP/{} {}\r\n"
         "Content-Length: {}\r\n\r\n"
         "{}",
-        data.size(), data);
+        options.http_version, options.http_return_code, data.size(), data);
     // Send a message to the connection
     const auto sent = send(connection, http_message.c_str(), http_message.size(), 0);
     if (sent != http_message.size()) {
@@ -86,15 +105,30 @@ struct Server {
     return EXIT_SUCCESS;
   }
 };
+
+// https://stackoverflow.com/questions/53408962/try-to-understand-compiler-error-message-default-member-initializer-required-be
+constexpr HTTPOneShotServer::HTTPOptions::HTTPOptions() = default;
 }  // namespace
 
-TEST(DownloaderTest, EarthPornURL) {
+TEST(DownloaderTest, CanDownloadHTTP) {
   constexpr auto data = "hello";
   constexpr auto port = 50000;
-  const auto server = Server{port, data};
+  const auto server = HTTPOneShotServer{port, data};
   const auto uut = downloader{nullptr};
-  while (!server.listening) {
+  while (!server.is_listening()) {
   }
   const auto actual = uut.perform_string(fmt::format("localhost:{}", port));
   ASSERT_EQ(data, actual);
+}
+
+TEST(DownloaderTest, NullOptIfNot200) {
+  constexpr auto data = "hello";
+  constexpr auto port = 50001;
+  constexpr auto options = HTTPOneShotServer::HTTPOptions().with_return_code("404 Not Found");
+  const auto server = HTTPOneShotServer{port, data, options};
+  const auto uut = downloader{nullptr};
+  while (!server.is_listening()) {
+  }
+  const auto actual = uut.perform_string(fmt::format("localhost:{}", port));
+  ASSERT_EQ(actual, std::nullopt);
 }
