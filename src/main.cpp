@@ -9,6 +9,7 @@
 #include "downloader.hpp"
 #include "downloader_delegate.hpp"
 #include "earthporn.hpp"
+#include "environment_configuration.hpp"
 #include "image.hpp"
 #include "image_delegate.hpp"
 #include "json_parse_delegate.hpp"
@@ -29,6 +30,7 @@ template <>
 struct fmt::formatter<po::options_description> : ostream_formatter {};
 
 int main(int argc, const char *argv[]) {
+  const auto config = environment_configuration{default_configuration{}};
   auto program_del = std::shared_ptr<program_delegate_b>{new verbose_program_delegate{}};
   auto download_del = std::unique_ptr<downloader_delegate_b>{new downloader_delegate{program_del}};
   auto parse_del = std::unique_ptr<json_parse_delegate_b>{new json_parse_delegate{program_del}};
@@ -67,6 +69,13 @@ int main(int argc, const char *argv[]) {
 
   const auto d = downloader{std::move(download_del)};
   const auto e = earthporn{std::move(parse_del)};
+
+  const auto cache = config.cache_location();
+  if (!cache) {
+    program_del->info("No cache detected, so downloading everything fresh");
+  } else {
+    program_del->info("Using cache: " + cache.value().string());
+  }
 
   program_del->info("Getting swearwords from " + swear_url);
   auto swearwords = d.perform_vector(swear_url);

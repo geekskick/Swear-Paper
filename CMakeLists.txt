@@ -19,27 +19,30 @@ find_package(OpenCV 4.1.2 REQUIRED)
 find_package(nlohmann_json 3.11.2 REQUIRED)
 
 add_library(core STATIC 
-src/lib/include/interfaces/downloader_delegate_b.hpp
-src/lib/include/interfaces/image_delegate_b.hpp
-src/lib/include/interfaces/json_parse_delegate_b.hpp
-src/lib/include/interfaces/program_delegate_b.hpp
-src/lib/include/interfaces/reddit_interface.hpp
-src/lib/include/image_location.hpp
-src/lib/include/image_size.hpp
-src/lib/include/downloader.hpp
-src/lib/downloader.cpp
-src/lib/include/downloader_delegate.hpp
-src/lib/downloader_delegate.cpp
-src/lib/include/earthporn.hpp
-src/lib/earthporn.cpp
-src/lib/include/image.hpp
-src/lib/image.cpp
-src/lib/include/image_delegate.hpp
-src/lib/image_delegate.cpp
-       src/lib/include/json_parse_delegate.hpp
-       src/lib/json_parse_delegate.cpp
-       src/lib/include/program_delegates.hpp
-       src/lib/program_delegates.cpp
+    src/lib/include/interfaces/downloader_delegate_b.hpp
+    src/lib/include/interfaces/configuration_interface.hpp
+    src/lib/include/interfaces/image_delegate_b.hpp
+    src/lib/include/interfaces/json_parse_delegate_b.hpp
+    src/lib/include/interfaces/program_delegate_b.hpp
+    src/lib/include/interfaces/reddit_interface.hpp
+    src/lib/include/image_location.hpp
+    src/lib/include/image_size.hpp
+    src/lib/include/downloader.hpp
+    src/lib/include/environment_configuration.hpp
+    src/lib/environment_configuration.cpp
+    src/lib/downloader.cpp
+    src/lib/include/downloader_delegate.hpp
+    src/lib/downloader_delegate.cpp
+    src/lib/include/earthporn.hpp
+    src/lib/earthporn.cpp
+    src/lib/include/image.hpp
+    src/lib/image.cpp
+    src/lib/include/image_delegate.hpp
+    src/lib/image_delegate.cpp
+    src/lib/include/json_parse_delegate.hpp
+    src/lib/json_parse_delegate.cpp
+    src/lib/include/program_delegates.hpp
+    src/lib/program_delegates.cpp
        )
 target_include_directories(core PUBLIC src/lib/include)
 
@@ -64,5 +67,6 @@ add_executable(swear_paper_test
     test/expected_reply.hpp
     test/earthporn_json_parse_test.cpp
     test/downloader_test.cpp
+    test/environment_configuration_test.cpp
     )
 target_link_libraries(swear_paper_test PRIVATE core GTest::gtest_main GTest::gmock)
