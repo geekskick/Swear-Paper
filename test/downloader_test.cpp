@@ -37,16 +37,17 @@ struct HTTPOneShotServer {
     }
   };
   [[nodiscard]] bool is_listening() const { return listening; }
-  HTTPOneShotServer(size_t port, std::string_view data, HTTPOptions options = HTTPOneShotServer::HTTPOptions())
-      : data{std::move(data)}, port{std::move(port)}, s{std::thread{&HTTPOneShotServer::serve, this, data}}, options{std::move(options)} {}
+  HTTPOneShotServer(std::string_view data, HTTPOptions options = HTTPOneShotServer::HTTPOptions()) : data{std::move(data)}, options{std::move(options)}, s{std::thread{&HTTPOneShotServer::serve, this, data}} {}
   ~HTTPOneShotServer() { s.join(); }
+
+  size_t listening_port() const { return next_attempted_port - 1; }
 
  private:
   std::string_view data{};
-  size_t port{};
+  mutable std::atomic_size_t next_attempted_port{5000};
+  HTTPOptions options{};
   std::thread s{};
   mutable std::atomic_bool listening{false};
-  HTTPOptions options{};
 
   int serve(const std::string_view data) const {
     const auto sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -59,12 +60,12 @@ struct HTTPOneShotServer {
     auto sockaddr = sockaddr_in{};
     sockaddr.sin_family = AF_INET;
     sockaddr.sin_addr.s_addr = INADDR_ANY;
-    sockaddr.sin_port = htons(port);  // htons is necessary to convert a number to
-                                      // network byte order
-    if (bind(sockfd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0) {
-      fmt::print("Unable to bind to port {}: {}\n", port, std::strerror(errno));
-      return EXIT_FAILURE;
-    }
+
+    do {
+      sockaddr.sin_port = htons(next_attempted_port++);  // htons is necessary to convert a number to
+      fmt::print("Trying to bind to port {}\n", next_attempted_port - 1);
+      // network byte order
+    } while (bind(sockfd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0);
 
     // Start listening. Hold at most 1 connections in the queue
     listening = true;
@@ -110,25 +111,104 @@ struct HTTPOneShotServer {
 constexpr HTTPOneShotServer::HTTPOptions::HTTPOptions() = default;
 }  // namespace
 
-TEST(DownloaderTest, CanDownloadHTTP) {
+TEST(DownloaderTest, CanDownloadHTTPString) {
   constexpr auto data = "hello";
-  constexpr auto port = 50000;
-  const auto server = HTTPOneShotServer{port, data};
+  const auto server = HTTPOneShotServer{data};
   const auto uut = downloader{nullptr};
   while (!server.is_listening()) {
   }
-  const auto actual = uut.perform_string(fmt::format("localhost:{}", port));
+  const auto actual = uut.perform_string(fmt::format("localhost:{}", server.listening_port()));
   ASSERT_EQ(data, actual);
 }
 
-TEST(DownloaderTest, NullOptIfNot200) {
+TEST(DownloaderTest, CanDownloadHTTPWithDelegateString) {
+  auto mock = std::make_unique<testing::StrictMock<mock_delegate>>();
+  EXPECT_CALL(*mock, download_started(testing::_)).Times(1);
+  EXPECT_CALL(*mock, download_ended(testing::_)).Times(1);
   constexpr auto data = "hello";
-  constexpr auto port = 50001;
+  const auto server = HTTPOneShotServer{data};
+  const auto uut = downloader{std::move(mock)};
+  while (!server.is_listening()) {
+  }
+  const auto actual = uut.perform_string(fmt::format("localhost:{}", server.listening_port()));
+  ASSERT_EQ(data, actual);
+}
+
+TEST(DownloaderTest, NullOptIfNot200String) {
+  constexpr auto data = "hello";
   constexpr auto options = HTTPOneShotServer::HTTPOptions().with_return_code("404 Not Found");
-  const auto server = HTTPOneShotServer{port, data, options};
+  const auto server = HTTPOneShotServer{data, options};
   const auto uut = downloader{nullptr};
   while (!server.is_listening()) {
   }
-  const auto actual = uut.perform_string(fmt::format("localhost:{}", port));
+  const auto actual = uut.perform_string(fmt::format("localhost:{}", server.listening_port()));
   ASSERT_EQ(actual, std::nullopt);
+}
+
+TEST(DownloaderTest, ThrowsIfNotHTTP11String) {
+  constexpr auto data = "hello";
+  constexpr auto options = HTTPOneShotServer::HTTPOptions().with_version("0.9");
+  const auto server = HTTPOneShotServer{data, options};
+  const auto uut = downloader{nullptr};
+  while (!server.is_listening()) {
+  }
+  ASSERT_ANY_THROW(uut.perform_string(fmt::format("localhost:{}", server.listening_port())));
+}
+
+TEST(DownloaderTest, CanDownloadHTTPStringVector) {
+  constexpr auto data = "hello\nworld";
+  const auto server = HTTPOneShotServer{data};
+  const auto uut = downloader{nullptr};
+  while (!server.is_listening()) {
+  }
+  const auto actual = uut.perform_vector(fmt::format("localhost:{}", server.listening_port()));
+  const auto expected = std::vector<std::string>{"hello", "world"};
+  ASSERT_THAT(expected, testing::ContainerEq(actual.value()));
+}
+
+TEST(DownloaderTest, CanDownloadHTTPStringVectorWithOneItem) {
+  constexpr auto data = "hello";
+  const auto server = HTTPOneShotServer{data};
+  const auto uut = downloader{nullptr};
+  while (!server.is_listening()) {
+  }
+  const auto actual = uut.perform_vector(fmt::format("localhost:{}", server.listening_port()));
+  const auto expected = std::vector<std::string>{"hello"};
+  ASSERT_THAT(expected, testing::ContainerEq(actual.value()));
+}
+
+TEST(DownloaderTest, CanDownloadHTTPWithDelegateStringVector) {
+  auto mock = std::make_unique<testing::StrictMock<mock_delegate>>();
+  EXPECT_CALL(*mock, download_started(testing::_)).Times(1);
+  EXPECT_CALL(*mock, download_ended(testing::_)).Times(1);
+  constexpr auto data = "hello\nworld";
+  const auto server = HTTPOneShotServer{data};
+  const auto uut = downloader{std::move(mock)};
+  while (!server.is_listening()) {
+  }
+  const auto actual = uut.perform_vector(fmt::format("localhost:{}", server.listening_port()));
+
+  const auto expected = std::vector<std::string>{"hello", "world"};
+  ASSERT_THAT(expected, testing::ContainerEq(actual.value()));
+}
+
+TEST(DownloaderTest, NullOptIfNot200StringVector) {
+  constexpr auto data = "hello\nworld";
+  constexpr auto options = HTTPOneShotServer::HTTPOptions().with_return_code("404 Not Found");
+  const auto server = HTTPOneShotServer{data, options};
+  const auto uut = downloader{nullptr};
+  while (!server.is_listening()) {
+  }
+  const auto actual = uut.perform_vector(fmt::format("localhost:{}", server.listening_port()));
+  ASSERT_EQ(actual, std::nullopt);
+}
+
+TEST(DownloaderTest, ThrowsIfNotHTTP11StringVector) {
+  constexpr auto data = "hello\nworld";
+  constexpr auto options = HTTPOneShotServer::HTTPOptions().with_version("0.9");
+  const auto server = HTTPOneShotServer{data, options};
+  const auto uut = downloader{nullptr};
+  while (!server.is_listening()) {
+  }
+  ASSERT_ANY_THROW(uut.perform_vector(fmt::format("localhost:{}", server.listening_port())));
 }
