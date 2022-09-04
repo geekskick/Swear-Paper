@@ -212,3 +212,15 @@ TEST(DownloaderTest, ThrowsIfNotHTTP11StringVector) {
   }
   ASSERT_ANY_THROW(uut.perform_vector(fmt::format("localhost:{}", server.listening_port())));
 }
+
+TEST(DownloaderTest, CanDownloadHTTPImage) {
+  constexpr auto data = "\x01\x02";
+  const auto server = HTTPOneShotServer{data};
+  const auto uut = downloader{nullptr};
+  while (!server.is_listening()) {
+  }
+  const auto actual = uut.perform_image(fmt::format("localhost:{}", server.listening_port()));
+
+  const auto expected = std::vector<char>{1, 2};
+  ASSERT_THAT(expected, testing::ContainerEq(actual.value()));
+}
