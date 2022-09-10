@@ -1,4 +1,6 @@
 #include <fmt/ostream.h>
+#include <spdlog/cfg/env.h>
+#include <spdlog/spdlog.h>
 
 #include <boost/program_options.hpp>
 #include <cstddef>
@@ -7,13 +9,9 @@
 #include <string>
 
 #include "downloader.hpp"
-#include "downloader_delegate.hpp"
 #include "earthporn.hpp"
 #include "environment_configuration.hpp"
 #include "image.hpp"
-#include "image_delegate.hpp"
-#include "json_parse_delegate.hpp"
-#include "program_delegates.hpp"
 
 namespace po = boost::program_options;
 namespace {
@@ -30,11 +28,8 @@ template <>
 struct fmt::formatter<po::options_description> : ostream_formatter {};
 
 int main(int argc, const char *argv[]) {
+  spdlog::cfg::load_env_levels();
   const auto config = environment_configuration{default_configuration{}};
-  auto program_del = std::shared_ptr<program_delegate_b>{new verbose_program_delegate{}};
-  auto download_del = std::unique_ptr<downloader_delegate_b>{new downloader_delegate{program_del}};
-  auto parse_del = std::unique_ptr<json_parse_delegate_b>{new json_parse_delegate{program_del}};
-  auto img_del = std::unique_ptr<image_delegate_b>{new image_delegate{program_del}};
 
   auto desc = po::options_description("Allowed Options");
 
@@ -59,42 +54,38 @@ int main(int argc, const char *argv[]) {
     exit(EXIT_SUCCESS);
   }
 
-  if (vm.count("quiet")) {
-    program_del = std::make_shared<quiet_program_delegate>();
-  }
-
   const auto swear_url = vm["source"].as<std::string>();
   const auto idx = vm["skip"].as<int>();
   const auto thickness = vm["thickness"].as<int>();
 
-  const auto d = downloader{std::move(download_del)};
-  const auto e = earthporn{std::move(parse_del)};
+  const auto d = downloader{};
+  const auto e = earthporn{};
 
   const auto cache = config.cache_location();
   if (!cache) {
-    program_del->info("No cache detected, so downloading everything fresh");
+    spdlog::debug("No cache detected, so downloading everything fresh");
   } else {
-    program_del->info("Using cache: " + cache.value().string());
+    spdlog::debug("Using cache: " + cache.value().string());
   }
 
-  program_del->info("Getting swearwords from " + swear_url);
+  spdlog::debug("Getting swearwords from " + swear_url);
   auto swearwords = d.perform_vector(swear_url);
   if (!swearwords) {
-    program_del->error("Unable to get swearwords");
+    spdlog::error("Unable to get swearwords");
     exit(EXIT_FAILURE);
   }
 
   if (swearwords->empty()) {
-    program_del->error("Swear words not populated");
+    spdlog::error("Swear words not populated");
     exit(EXIT_FAILURE);
   }
 
-  program_del->info(std::string{"Getting image json from "} + e.get_sub_reddit_url().data());
+  spdlog::debug(std::string{"Getting image json from "} + e.get_sub_reddit_url().data());
 
   // get the json as a string
   const auto json_string = d.perform_string(e.get_sub_reddit_url().data());
   if (!json_string) {
-    program_del->error("Unable to get JSON");
+    spdlog::error("Unable to get JSON");
     exit(EXIT_FAILURE);
   }
 
@@ -102,11 +93,11 @@ int main(int argc, const char *argv[]) {
   const auto raw_image = d.perform_image(url);
 
   if (!raw_image) {
-    program_del->error("Error getting the image");
+    spdlog::error("Error getting the image");
     exit(EXIT_FAILURE);
   }
 
-  auto downloaded_image = image(*raw_image, std::move(img_del), thickness);
+  auto downloaded_image = image(*raw_image, thickness);
   const auto word = [&]() {
     auto candidate = std::string{};
     do {
@@ -115,12 +106,12 @@ int main(int argc, const char *argv[]) {
       // remove it from the list so that it doesnt get selected again if it's
       // too big
       swearwords->erase(swearwords->begin() + n);
-      program_del->info("Word is:\t " + candidate);
+      spdlog::debug("Word is:\t " + candidate);
 
     } while (!downloaded_image.word_fits(candidate) && !swearwords->empty());
 
     if (swearwords->empty()) {
-      program_del->error("No more swear words left to try and fit on.");
+      spdlog::error("No more swear words left to try and fit on.");
       exit(EXIT_FAILURE);
     }
     return candidate;

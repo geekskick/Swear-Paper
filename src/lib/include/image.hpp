@@ -8,13 +8,12 @@
 #include <string>                    // for string
 #include <vector>                    // for vector
 
-#include "image_location.hpp"               // for image_location
-#include "image_size.hpp"                   // for image_size
-#include "interfaces/image_delegate_b.hpp"  // for image_delegate_b
+#include "image_location.hpp"  // for image_location
+#include "image_size.hpp"      // for image_size
 
 class image {
  public:
-  image(const std::vector<char> &from, std::unique_ptr<image_delegate_b> del, const int thick = 1);
+  image(const std::vector<char> &from, const int thick = 1);
 
   void put_text(const std::string &word);
   void save_to_file(const std::string &filename) const;
@@ -25,7 +24,6 @@ class image {
   cv::Mat m_image;
   int m_line_thickness;
   int m_font;
-  std::unique_ptr<image_delegate_b> m_del;
 
   cv::Scalar text_colour(const std::string &word) const;
   int scale_factor() const;

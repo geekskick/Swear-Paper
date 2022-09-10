@@ -1,6 +1,7 @@
 #include "include/earthporn.hpp"
 
 #include <fmt/format.h>
+#include <spdlog/spdlog.h>
 std::string earthporn::get_url_from_reply(const std::string& json_to_parse, const int idx = 0) const {
   // this might throw an exception
   try {
@@ -9,9 +10,7 @@ std::string earthporn::get_url_from_reply(const std::string& json_to_parse, cons
     // the json has a fixed structure and this is where the newest image link is
     const auto new_url = json["data"]["children"][idx]["data"]["url"];
 
-    if (m_del) {
-      m_del->parse_result(new_url);
-    }
+    spdlog::debug("Parsed URL {}", new_url);
 
     return new_url;
   } catch (const nlohmann::json::exception& e) {

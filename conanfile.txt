@@ -5,8 +5,10 @@ boost/1.71.0
 libcurl/7.84.0
 fmt/9.1.0
 gtest/1.12.1
+spdlog/1.10.0
 
 [options]
+spdlog:header_only = True
 fmt:header_only = True
 opencv:with_openexr = False
 opencv:with_eigen = False

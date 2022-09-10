@@ -2,16 +2,15 @@
 #define DOWNLOADER_HPP
 
 #include <curl/curl.h>
+#include <spdlog/spdlog.h>
 
 #include <optional>
+#include <string>
 #include <vector>
-
-#include "interfaces/downloader_delegate_b.hpp"
 
 class downloader {
  public:
   downloader();
-  explicit downloader(std::unique_ptr<downloader_delegate_b> delegate);
   ~downloader();
 
   std::optional<std::string> perform_string(const std::string &url) const;
@@ -20,7 +19,6 @@ class downloader {
 
  private:
   void *m_curl;
-  std::unique_ptr<downloader_delegate_b> m_del;
 
   static size_t write_data_to_string(void *ptr, size_t size, size_t nmemb, void *userdata);
   static size_t write_data_to_vector(void *ptr, size_t size, size_t nmemb, void *stream);

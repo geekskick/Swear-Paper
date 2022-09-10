@@ -17,13 +17,10 @@ find_package(Boost 1.71.0 REQUIRED COMPONENTS program_options)
 find_package(CURL 7.67.0 REQUIRED)
 find_package(OpenCV 4.1.2 REQUIRED)
 find_package(nlohmann_json 3.11.2 REQUIRED)
+find_package(spdlog 1.10.0 REQUIRED)
 
 add_library(core STATIC 
-    src/lib/include/interfaces/downloader_delegate_b.hpp
     src/lib/include/interfaces/configuration_interface.hpp
-    src/lib/include/interfaces/image_delegate_b.hpp
-    src/lib/include/interfaces/json_parse_delegate_b.hpp
-    src/lib/include/interfaces/program_delegate_b.hpp
     src/lib/include/interfaces/reddit_interface.hpp
     src/lib/include/image_location.hpp
     src/lib/include/image_size.hpp
@@ -31,18 +28,10 @@ add_library(core STATIC
     src/lib/include/environment_configuration.hpp
     src/lib/environment_configuration.cpp
     src/lib/downloader.cpp
-    src/lib/include/downloader_delegate.hpp
-    src/lib/downloader_delegate.cpp
     src/lib/include/earthporn.hpp
     src/lib/earthporn.cpp
     src/lib/include/image.hpp
     src/lib/image.cpp
-    src/lib/include/image_delegate.hpp
-    src/lib/image_delegate.cpp
-    src/lib/include/json_parse_delegate.hpp
-    src/lib/json_parse_delegate.cpp
-    src/lib/include/program_delegates.hpp
-    src/lib/program_delegates.cpp
        )
 target_include_directories(core PUBLIC src/lib/include)
 
@@ -52,7 +41,8 @@ target_link_libraries(core PUBLIC
        CURL::libcurl 
        opencv::opencv_core 
        opencv::opencv_imgcodecs
-       nlohmann_json::nlohmann_json)
+       nlohmann_json::nlohmann_json
+       spdlog::spdlog)
 
 target_compile_features(core PUBLIC cxx_std_17)
 target_compile_options(core PRIVATE ${_FLAGS})

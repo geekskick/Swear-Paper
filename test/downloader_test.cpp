@@ -15,12 +15,6 @@
 #include <thread>
 
 namespace {
-struct mock_delegate : public downloader_delegate_b {
-  mock_delegate() : downloader_delegate_b{nullptr} {}
-  MOCK_METHOD(void, download_started, (const std::string &), (override));
-  MOCK_METHOD(void, download_ended, (const std::string &), (override));
-};
-
 struct HTTPOneShotServer {
   struct HTTPOptions {
     std::string_view http_return_code{"200 OK"};
@@ -37,7 +31,8 @@ struct HTTPOneShotServer {
     }
   };
   [[nodiscard]] bool is_listening() const { return listening; }
-  HTTPOneShotServer(std::string_view data, HTTPOptions options = HTTPOneShotServer::HTTPOptions()) : data{std::move(data)}, options{std::move(options)}, s{std::thread{&HTTPOneShotServer::serve, this, data}} {}
+  HTTPOneShotServer(std::string_view data, HTTPOptions options = HTTPOneShotServer::HTTPOptions())
+      : data{std::move(data)}, options{std::move(options)}, s{std::thread{&HTTPOneShotServer::serve, this, data}} {}
   ~HTTPOneShotServer() { s.join(); }
 
   size_t listening_port() const { return next_attempted_port - 1; }
@@ -114,20 +109,7 @@ constexpr HTTPOneShotServer::HTTPOptions::HTTPOptions() = default;
 TEST(DownloaderTest, CanDownloadHTTPString) {
   constexpr auto data = "hello";
   const auto server = HTTPOneShotServer{data};
-  const auto uut = downloader{nullptr};
-  while (!server.is_listening()) {
-  }
-  const auto actual = uut.perform_string(fmt::format("localhost:{}", server.listening_port()));
-  ASSERT_EQ(data, actual);
-}
-
-TEST(DownloaderTest, CanDownloadHTTPWithDelegateString) {
-  auto mock = std::make_unique<testing::StrictMock<mock_delegate>>();
-  EXPECT_CALL(*mock, download_started(testing::_)).Times(1);
-  EXPECT_CALL(*mock, download_ended(testing::_)).Times(1);
-  constexpr auto data = "hello";
-  const auto server = HTTPOneShotServer{data};
-  const auto uut = downloader{std::move(mock)};
+  const auto uut = downloader{};
   while (!server.is_listening()) {
   }
   const auto actual = uut.perform_string(fmt::format("localhost:{}", server.listening_port()));
@@ -138,7 +120,7 @@ TEST(DownloaderTest, NullOptIfNot200String) {
   constexpr auto data = "hello";
   constexpr auto options = HTTPOneShotServer::HTTPOptions().with_return_code("404 Not Found");
   const auto server = HTTPOneShotServer{data, options};
-  const auto uut = downloader{nullptr};
+  const auto uut = downloader{};
   while (!server.is_listening()) {
   }
   const auto actual = uut.perform_string(fmt::format("localhost:{}", server.listening_port()));
@@ -149,7 +131,7 @@ TEST(DownloaderTest, ThrowsIfNotHTTP11String) {
   constexpr auto data = "hello";
   constexpr auto options = HTTPOneShotServer::HTTPOptions().with_version("0.9");
   const auto server = HTTPOneShotServer{data, options};
-  const auto uut = downloader{nullptr};
+  const auto uut = downloader{};
   while (!server.is_listening()) {
   }
   ASSERT_ANY_THROW(uut.perform_string(fmt::format("localhost:{}", server.listening_port())));
@@ -158,7 +140,7 @@ TEST(DownloaderTest, ThrowsIfNotHTTP11String) {
 TEST(DownloaderTest, CanDownloadHTTPStringVector) {
   constexpr auto data = "hello\nworld";
   const auto server = HTTPOneShotServer{data};
-  const auto uut = downloader{nullptr};
+  const auto uut = downloader{};
   while (!server.is_listening()) {
   }
   const auto actual = uut.perform_vector(fmt::format("localhost:{}", server.listening_port()));
@@ -169,7 +151,7 @@ TEST(DownloaderTest, CanDownloadHTTPStringVector) {
 TEST(DownloaderTest, CanDownloadHTTPStringVectorWithOneItem) {
   constexpr auto data = "hello";
   const auto server = HTTPOneShotServer{data};
-  const auto uut = downloader{nullptr};
+  const auto uut = downloader{};
   while (!server.is_listening()) {
   }
   const auto actual = uut.perform_vector(fmt::format("localhost:{}", server.listening_port()));
@@ -177,26 +159,11 @@ TEST(DownloaderTest, CanDownloadHTTPStringVectorWithOneItem) {
   ASSERT_THAT(expected, testing::ContainerEq(actual.value()));
 }
 
-TEST(DownloaderTest, CanDownloadHTTPWithDelegateStringVector) {
-  auto mock = std::make_unique<testing::StrictMock<mock_delegate>>();
-  EXPECT_CALL(*mock, download_started(testing::_)).Times(1);
-  EXPECT_CALL(*mock, download_ended(testing::_)).Times(1);
-  constexpr auto data = "hello\nworld";
-  const auto server = HTTPOneShotServer{data};
-  const auto uut = downloader{std::move(mock)};
-  while (!server.is_listening()) {
-  }
-  const auto actual = uut.perform_vector(fmt::format("localhost:{}", server.listening_port()));
-
-  const auto expected = std::vector<std::string>{"hello", "world"};
-  ASSERT_THAT(expected, testing::ContainerEq(actual.value()));
-}
-
 TEST(DownloaderTest, NullOptIfNot200StringVector) {
   constexpr auto data = "hello\nworld";
   constexpr auto options = HTTPOneShotServer::HTTPOptions().with_return_code("404 Not Found");
   const auto server = HTTPOneShotServer{data, options};
-  const auto uut = downloader{nullptr};
+  const auto uut = downloader{};
   while (!server.is_listening()) {
   }
   const auto actual = uut.perform_vector(fmt::format("localhost:{}", server.listening_port()));
@@ -207,7 +174,7 @@ TEST(DownloaderTest, ThrowsIfNotHTTP11StringVector) {
   constexpr auto data = "hello\nworld";
   constexpr auto options = HTTPOneShotServer::HTTPOptions().with_version("0.9");
   const auto server = HTTPOneShotServer{data, options};
-  const auto uut = downloader{nullptr};
+  const auto uut = downloader{};
   while (!server.is_listening()) {
   }
   ASSERT_ANY_THROW(uut.perform_vector(fmt::format("localhost:{}", server.listening_port())));
@@ -216,7 +183,7 @@ TEST(DownloaderTest, ThrowsIfNotHTTP11StringVector) {
 TEST(DownloaderTest, CanDownloadHTTPImage) {
   constexpr auto data = "\x01\x02";
   const auto server = HTTPOneShotServer{data};
-  const auto uut = downloader{nullptr};
+  const auto uut = downloader{};
   while (!server.is_listening()) {
   }
   const auto actual = uut.perform_image(fmt::format("localhost:{}", server.listening_port()));

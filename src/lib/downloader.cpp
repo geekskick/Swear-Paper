@@ -7,7 +7,6 @@
 
 // constructor inits libcurl
 
-downloader::downloader(std::unique_ptr<downloader_delegate_b> delegate) : m_curl{curl_easy_init()}, m_del{std::move(delegate)} {}
 downloader::downloader() : m_curl(curl_easy_init()) {}
 
 // dtor safely cleans up the downloader
@@ -36,15 +35,10 @@ std::optional<std::string> downloader::perform_string(const std::string &url) co
   check_rc(code, "url_easy_setopt(m_curl, CURLOPT_WRITEDATA, &result)");
 
   // do it!
-  if (m_del) {
-    m_del->download_started(url);
-  }
+  spdlog::debug("Starting download from {}", url);
 
   code = curl_easy_perform(m_curl);
-
-  if (m_del) {
-    m_del->download_ended(url);
-  }
+  spdlog::debug("Starting ended from {}", url);
 
   check_rc(code, "url_easy_perform(m_curl):" + url);
 
@@ -106,16 +100,11 @@ std::optional<std::vector<char>> downloader::perform_image(const std::string &ur
   auto result = std::vector<char>{};
   curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, &result);
 
-  // do it!
-  if (m_del) {
-    m_del->download_started(url);
-  }
+  spdlog::debug("Starting download from {}", url);
 
   code = curl_easy_perform(m_curl);
+  spdlog::debug("Starting ended from {}", url);
 
-  if (m_del) {
-    m_del->download_ended(url);
-  }
   check_rc(code, "curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &response_code)");
 
   return result;

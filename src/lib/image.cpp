@@ -1,30 +1,24 @@
 #include "include/image.hpp"
 
+#include <spdlog/spdlog.h>
+
 #include <algorithm>              // for max, min
 #include <opencv2/core.hpp>       // for countNonZero
 #include <opencv2/imgcodecs.hpp>  // for imdecode, imwrite
 #include <opencv2/imgproc.hpp>    // for getTextSize, cvtColor, putText, thr...
 #include <utility>                // for move
 
-image::image(const std::vector<char> &from, std::unique_ptr<image_delegate_b> del, const int thick) : m_image{cv::imdecode(from, -1)}, m_line_thickness{thick}, m_font{cv::FONT_HERSHEY_SCRIPT_COMPLEX}, m_del{std::move(del)} {
-  if (m_del) {
-    m_del->image_info("Dimensions", size());
-  }
-}
+image::image(const std::vector<char> &from, const int thick) : m_image{cv::imdecode(from, -1)}, m_line_thickness{thick}, m_font{cv::FONT_HERSHEY_SCRIPT_COMPLEX} {}
 
 void image::put_text(const std::string &word) {
   const auto word_loc = word_location(word);
   cv::putText(m_image, word, cv::Point(word_loc.x, word_loc.y), m_font, scale_factor(), text_colour(word), m_line_thickness);
-  if (m_del) {
-    m_del->image_put_text(word, word_loc);
-  }
+  spdlog::trace("Putting {} at location {}", word, word_loc);
 }
 
 void image::save_to_file(const std::string &filename) const {
   cv::imwrite(filename, m_image);
-  if (m_del) {
-    m_del->image_saved(filename);
-  }
+  spdlog::debug("Image save as {}", filename);
 }
 
 bool image::word_fits(const std::string &word) const {
