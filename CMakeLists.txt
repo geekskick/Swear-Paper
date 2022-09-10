@@ -24,6 +24,7 @@ add_library(core STATIC
     src/lib/include/interfaces/reddit_interface.hpp
     src/lib/include/image_location.hpp
     src/lib/include/image_size.hpp
+    src/lib/include/fmt_optional.hpp
     src/lib/include/downloader.hpp
     src/lib/include/environment_configuration.hpp
     src/lib/environment_configuration.cpp

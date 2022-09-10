@@ -29,7 +29,8 @@ struct fmt::formatter<po::options_description> : ostream_formatter {};
 
 int main(int argc, const char *argv[]) {
   spdlog::cfg::load_env_levels();
-  const auto config = environment_configuration{default_configuration{}};
+  const auto defaults = default_configuration{};
+  const auto config = environment_configuration{defaults};
 
   auto desc = po::options_description("Allowed Options");
 
@@ -62,11 +63,14 @@ int main(int argc, const char *argv[]) {
   const auto e = earthporn{};
 
   const auto cache = config.cache_location();
-  if (!cache) {
-    spdlog::debug("No cache detected, so downloading everything fresh");
-  } else {
-    spdlog::debug("Using cache: " + cache.value().string());
-  }
+  // if (!cache) {
+  //  spdlog::debug("No cache detected, so downloading everything fresh");
+  //} else {
+  spdlog::debug("Using cache: " + cache.value().string());
+  const auto swearsfile = cache.value() / "swears.txt";
+  const auto swearsfile_exists = std::filesystem::exists(swearsfile);
+  spdlog::debug("Swearsfile {} exists: {}", swearsfile.c_str(), swearsfile_exists);
+  //}
 
   spdlog::debug("Getting swearwords from " + swear_url);
   auto swearwords = d.perform_vector(swear_url);
