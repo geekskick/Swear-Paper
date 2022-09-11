@@ -32,6 +32,56 @@ std::vector<std::string> read_file_as_vector(const std::filesystem::path& filena
   std::copy(std::istream_iterator<std::string>(file), std::istream_iterator<std::string>(), std::back_inserter(rc));
   return rc;
 }
+
+template <typename T>
+struct CacheOrDownload {
+  std::filesystem::path cache_location{};
+  std::string_view download_url{};
+  const downloader& d;
+  std::optional<T> value{};
+  bool value_set{false};
+
+  void create_cache(const T& to_write) {
+    spdlog::trace("Creating a cached value file: ", cache_location);
+    auto file = std::ofstream{cache_location};
+    for (const auto& word : to_write) {
+      file << word << "\n";
+    }
+  }
+  CacheOrDownload(const std::filesystem::path location, std::string_view url, const downloader& download)
+      : cache_location{std::move(location)}, download_url{std::move(url)}, d{download} {}
+
+  [[nodiscard]] const std::optional<T>& get() {
+    if (value_set) {
+      spdlog::trace("Value already set, so not attempting to get again");
+      return value;
+    }
+    const auto cache_exists = std::filesystem::exists(cache_location);
+    if (cache_exists) {
+      spdlog::trace("Cache found at {}, so using the contents of that", cache_location);
+      value = read_file_as_vector(cache_location);
+      value_set = true;
+      return value;
+    }
+
+    spdlog::debug("Getting value from {}", download_url);
+    const auto downloaded_value = d.perform_vector(std::string{download_url});
+
+    if (!downloaded_value) {
+      spdlog::error("Unable to get value from {}", download_url);
+      return value;
+    }
+
+    create_cache(downloaded_value.value());
+
+    spdlog::trace("Providing value");
+    value = std::move(downloaded_value);
+    value_set = true;
+    return value;
+  }
+
+  [[nodiscard]] operator bool() const { return value; }
+};
 }  // namespace
 
 template <>
@@ -65,67 +115,77 @@ int main(int argc, const char* argv[]) {
     exit(EXIT_SUCCESS);
   }
 
+  const auto curl_init = curl_global_init(CURL_GLOBAL_ALL);
+  if (curl_init != CURLE_OK) {
+    spdlog::error("Unable to initialise curl");
+    exit(EXIT_FAILURE);
+  }
+
+  const auto cleanup_set_failure = std::atexit([]() {
+    spdlog::trace("Cleaning up curl");
+    curl_global_cleanup();
+  });
+
+  if (cleanup_set_failure) {
+    spdlog::error("Unable to set curl cleanup");
+  }
+
   const auto swear_url = vm["source"].as<std::string>();
   const auto idx = vm["skip"].as<int>();
   const auto thickness = vm["thickness"].as<int>();
 
-  const auto d = downloader{};
+  const auto swears_downloader = downloader{};
+  const auto image_downloader = downloader{};
   const auto e = earthporn{};
 
   const auto cache = config.cache_location();
-  // if (!cache) {
-  //  spdlog::debug("No cache detected, so downloading everything fresh");
-  //} else {
   const auto swearsfile = cache.value() / "swears.txt";
-  const auto swearsfile_exists = std::filesystem::exists(swearsfile);
   const auto cache_exists = std::filesystem::exists(cache.value());
-  spdlog::trace("Cache {} exists: {}", cache, cache_exists);
-  spdlog::debug("Swearsfile {} exists: {}", swearsfile, swearsfile_exists);
 
   if (!cache_exists) {
-    spdlog::trace("Cache doesn't exist, so creating one");
+    spdlog::trace("Cache directory {} doesn't exist, so creating one", cache);
     const auto created = std::filesystem::create_directories(cache.value());
     if (!created) {
-      spdlog::warn("Unable to create cache location: {}", cache);
+      spdlog::warn("Unable to create cache directory: {}", cache);
     }
   }
-  auto swearwords = [&]() {
-    if (swearsfile_exists) {
-      return read_file_as_vector(swearsfile);
-    } else {
-      spdlog::debug("Getting swearwords from " + swear_url);
-      const auto downloaded_swearwords = d.perform_vector(swear_url);
 
-      if (!downloaded_swearwords) {
-        spdlog::error("Unable to get swearwords");
-        exit(EXIT_FAILURE);
-      }
-      spdlog::trace("Creating a cached swears file");
-      auto file = std::ofstream{swearsfile};
-      for (const auto& word : downloaded_swearwords.value()) {
-        file << word << "\n";
-      }
-      return downloaded_swearwords.value();
+  auto swearword_provider = CacheOrDownload<std::vector<std::string>>{swearsfile, swear_url, swears_downloader};
+  auto swearwords_maybe = std::optional<std::vector<std::string>>{};
+
+  auto raw_image = std::optional<std::vector<char>>{};
+  auto image_thread = std::thread([&]() {
+    spdlog::debug(std::string{"Getting image json from "} + e.get_sub_reddit_url().data());
+
+    // get the json as a string
+    const auto json_string = image_downloader.perform_string(e.get_sub_reddit_url().data());
+    if (!json_string) {
+      spdlog::error("Unable to get JSON");
+      exit(EXIT_FAILURE);
     }
-  }();
+
+    const auto url = e.get_url_from_reply(*json_string, idx);
+    raw_image = image_downloader.perform_image(url);
+  });
+
+  auto swears_thread = std::thread([&]() { swearwords_maybe = swearword_provider.get(); });
+  swears_thread.join();
+  spdlog::trace("Swears thread done");
+
+  if (!swearwords_maybe) {
+    spdlog::error("Unable to get swear words!");
+    exit(EXIT_FAILURE);
+  }
+
+  auto swearwords = swearwords_maybe.value();
 
   if (swearwords.empty()) {
     spdlog::error("Swear words not populated");
     exit(EXIT_FAILURE);
   }
 
-  spdlog::debug(std::string{"Getting image json from "} + e.get_sub_reddit_url().data());
-
-  // get the json as a string
-  const auto json_string = d.perform_string(e.get_sub_reddit_url().data());
-  if (!json_string) {
-    spdlog::error("Unable to get JSON");
-    exit(EXIT_FAILURE);
-  }
-
-  const auto url = e.get_url_from_reply(*json_string, idx);
-  const auto raw_image = d.perform_image(url);
-
+  image_thread.join();
+  spdlog::trace("Image thread done");
   if (!raw_image) {
     spdlog::error("Error getting the image");
     exit(EXIT_FAILURE);
