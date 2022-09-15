@@ -53,6 +53,19 @@ target_link_libraries(core PUBLIC
 
 target_compile_features(core PUBLIC cxx_std_17)
 target_compile_options(core PRIVATE ${_FLAGS})
+target_precompile_headers(core PUBLIC 
+   src/lib/include/interfaces/configuration_interface.hpp
+    src/lib/include/interfaces/reddit_interface.hpp
+    src/lib/include/interfaces/downloader_interface.hpp
+    src/lib/include/image_location.hpp
+    src/lib/include/cache_or_download.hpp
+    src/lib/include/image_size.hpp
+    src/lib/include/fmt_optional.hpp
+    src/lib/include/downloader.hpp
+    src/lib/include/environment_configuration.hpp
+    src/lib/include/earthporn.hpp
+    src/lib/include/image.hpp
+)
 
 
 add_executable(swear_paper src/main.cpp)
