@@ -66,7 +66,17 @@ add_executable(swear_paper_test
 target_compile_options(swear_paper_test PRIVATE ${_FLAGS} -Wno-unused-but-set-variable)
 target_link_libraries(swear_paper_test PRIVATE core GTest::gtest_main GTest::gmock)
 
-add_style_check_target(core)
+option(LINT "cpplint" OFF)
+if(${LINT})
+    message(STATUS "Enabling cpplint")
+    add_style_check_target(core)
+endif()
+
+option(ANALYSE "clang-tidy" OFF)
+if(${ANALYSE})
+    message(STATUS "Enabling clang-tidy")
+    include(cmake/clang-tidy.cmake)
+endif()
 
 option(COVERAGE "gcov html report" OFF)
 if(${COVERAGE})
