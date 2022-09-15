@@ -8,7 +8,8 @@
         "oderwat.indent-rainbow",
         "vscodevim.vim",
         "matepek.vscode-catch2-test-adapter",
-        "george-alisson.html-preview-vscode"
+        "george-alisson.html-preview-vscode",
+        "wayou.vscode-todo-highlight"
     ],
     "mounts": [
         "source=gcc-conan,target=/conan,type=volume"

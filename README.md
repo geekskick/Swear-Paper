@@ -6,7 +6,7 @@ A command line application to generate a new desktop wallpaper, using the newest
 ## Dependancies
 
 Basically just docker, but if you want to know more then: 
-See [conafile](conanfile.txt) and [dockerfile](./docker/Dockerfile).
+See [conanfile](conanfile.txt) and [dockerfile](./docker/Dockerfile).
 
 ## Building
 
@@ -26,7 +26,6 @@ Allowed Options:
                                         Specify the location of the swear word 
                                         list
   -o [ --output ] arg                   Output filename
-  -q [ --quiet ]                        Don't show info messages
   --skip arg (=0)                       Skip to the nth image in the list of 
                                         available ones
   --thickness arg (=1)                  Thickness of the line used to print the

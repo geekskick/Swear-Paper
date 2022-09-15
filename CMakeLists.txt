@@ -25,13 +25,16 @@ find_package(spdlog 1.10.0 REQUIRED)
 add_library(core STATIC 
     src/lib/include/interfaces/configuration_interface.hpp
     src/lib/include/interfaces/reddit_interface.hpp
+    src/lib/include/interfaces/downloader_interface.hpp
     src/lib/include/image_location.hpp
+    src/lib/include/cache_or_download.hpp
     src/lib/include/image_size.hpp
     src/lib/include/fmt_optional.hpp
     src/lib/include/downloader.hpp
     src/lib/include/environment_configuration.hpp
     src/lib/environment_configuration.cpp
     src/lib/downloader.cpp
+    src/lib/cache_or_download.cpp
     src/lib/include/earthporn.hpp
     src/lib/earthporn.cpp
     src/lib/include/image.hpp
@@ -62,6 +65,7 @@ add_executable(swear_paper_test
     test/earthporn_json_parse_test.cpp
     test/downloader_test.cpp
     test/environment_configuration_test.cpp
+    test/cache_or_download_test.cpp
     )
 target_compile_options(swear_paper_test PRIVATE ${_FLAGS} -Wno-unused-but-set-variable)
 target_link_libraries(swear_paper_test PRIVATE core GTest::gtest_main GTest::gmock)

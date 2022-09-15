@@ -1,6 +1,5 @@
 #ifndef SRC_LIB_INCLUDE_DOWNLOADER_HPP_
 #define SRC_LIB_INCLUDE_DOWNLOADER_HPP_
-
 #include <curl/curl.h>
 #include <spdlog/spdlog.h>
 
@@ -8,14 +7,16 @@
 #include <string>
 #include <vector>
 
-class downloader {
+#include "interfaces/downloader_interface.hpp"
+
+class downloader : public downloader_interface {
  public:
   downloader();
-  ~downloader();
+  ~downloader() override;
 
-  std::optional<std::string> perform_string(const std::string &url) const;
-  std::optional<std::vector<std::string>> perform_vector(const std::string &url) const;
-  std::optional<std::vector<char>> perform_image(const std::string &url) const;
+  [[nodiscard]] std::optional<std::string> perform_string(const std::string &url) const override;
+  [[nodiscard]] std::optional<std::vector<std::string>> perform_vector(const std::string &url) const override;
+  [[nodiscard]] std::optional<std::vector<char>> perform_image(const std::string &url) const override;
 
  private:
   void *m_curl;

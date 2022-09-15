@@ -10,6 +10,7 @@
 #include <random>
 #include <string>
 
+#include "cache_or_download.hpp"
 #include "downloader.hpp"
 #include "earthporn.hpp"
 #include "environment_configuration.hpp"
@@ -25,63 +26,6 @@ int get_random_number(const int max) {
   std::uniform_int_distribution<int> uni(0, max);
   return uni(rng);
 }
-
-std::vector<std::string> read_file_as_vector(const std::filesystem::path& filename) {
-  auto file = std::ifstream{filename};
-  auto rc = std::vector<std::string>{};
-  std::copy(std::istream_iterator<std::string>(file), std::istream_iterator<std::string>(), std::back_inserter(rc));
-  return rc;
-}
-
-template <typename T>
-struct CacheOrDownload {
-  std::filesystem::path cache_location{};
-  std::string_view download_url{};
-  const downloader& d;
-  std::optional<T> value{};
-  bool value_set{false};
-
-  void create_cache(const T& to_write) {
-    spdlog::trace("Creating a cached value file: ", cache_location);
-    auto file = std::ofstream{cache_location};
-    for (const auto& word : to_write) {
-      file << word << "\n";
-    }
-  }
-  CacheOrDownload(const std::filesystem::path location, std::string_view url, const downloader& download)
-      : cache_location{std::move(location)}, download_url{std::move(url)}, d{download} {}
-
-  [[nodiscard]] const std::optional<T>& get() {
-    if (value_set) {
-      spdlog::trace("Value already set, so not attempting to get again");
-      return value;
-    }
-    const auto cache_exists = std::filesystem::exists(cache_location);
-    if (cache_exists) {
-      spdlog::trace("Cache found at {}, so using the contents of that", cache_location);
-      value = read_file_as_vector(cache_location);
-      value_set = true;
-      return value;
-    }
-
-    spdlog::debug("Getting value from {}", download_url);
-    const auto downloaded_value = d.perform_vector(std::string{download_url});
-
-    if (!downloaded_value) {
-      spdlog::error("Unable to get value from {}", download_url);
-      return value;
-    }
-
-    create_cache(downloaded_value.value());
-
-    spdlog::trace("Providing value");
-    value = std::move(downloaded_value);
-    value_set = true;
-    return value;
-  }
-
-  [[nodiscard]] operator bool() const { return value; }
-};
 }  // namespace
 
 template <>
@@ -101,7 +45,6 @@ int main(int argc, const char* argv[]) {
                                                     "https://raw.githubusercontent.com/LDNOOBW/"
                                                     "List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words/master/en"), "Specify the location of the swear word list")
     ("output,o", po::value<std::string>(), "Output filename")
-    ("quiet,q", "Don't show info messages")
     ("skip", po::value<int>()->default_value(0), "Skip to the nth image in the list of available ones")
     ("thickness", po::value<int>()->default_value(1), "Thickness of the line used to print the word");
   // clang-format on
@@ -150,12 +93,15 @@ int main(int argc, const char* argv[]) {
     }
   }
 
-  auto swearword_provider = CacheOrDownload<std::vector<std::string>>{swearsfile, swear_url, swears_downloader};
-  auto swearwords_maybe = std::optional<std::vector<std::string>>{};
+  auto swearword_provider = CacheOrDownloadStrings{swearsfile, swear_url, swears_downloader};
 
   auto raw_image = std::optional<std::vector<char>>{};
+
+  // While we are getting the swear words we can kick this off in the background
+  // to get the image
+  // TODO: Use a future
   auto image_thread = std::thread([&]() {
-    spdlog::debug(std::string{"Getting image json from "} + e.get_sub_reddit_url().data());
+    spdlog::debug("Getting image json from {}", e.get_sub_reddit_url().data());
 
     // get the json as a string
     const auto json_string = image_downloader.perform_string(e.get_sub_reddit_url().data());
@@ -168,9 +114,7 @@ int main(int argc, const char* argv[]) {
     raw_image = image_downloader.perform_image(url);
   });
 
-  auto swears_thread = std::thread([&]() { swearwords_maybe = swearword_provider.get(); });
-  swears_thread.join();
-  spdlog::trace("Swears thread done");
+  const auto swearwords_maybe = swearword_provider.get();
 
   if (!swearwords_maybe) {
     spdlog::error("Unable to get swear words!");
@@ -184,6 +128,7 @@ int main(int argc, const char* argv[]) {
     exit(EXIT_FAILURE);
   }
 
+  // There's nothing more we can do until the image is available right now
   image_thread.join();
   spdlog::trace("Image thread done");
   if (!raw_image) {
