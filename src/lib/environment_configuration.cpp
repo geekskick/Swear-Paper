@@ -46,7 +46,7 @@ std::optional<std::filesystem::path> environment_configuration::cache_location()
 }
 
 std::optional<std::filesystem::path> default_configuration::cache_location() const { return cache_location_; }
-default_configuration& default_configuration::with_cache_location(std::filesystem::path path) {
+default_configuration& default_configuration::with_cache_location(const std::filesystem::path& path) {
   cache_location_ = path;
   return *this;
 }

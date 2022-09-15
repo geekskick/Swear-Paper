@@ -7,7 +7,7 @@
 class default_configuration : public configuration_interface {
  public:
   [[nodiscard]] std::optional<std::filesystem::path> cache_location() const override;
-  [[nodiscard]] default_configuration& with_cache_location(std::filesystem::path path);
+  [[nodiscard]] default_configuration& with_cache_location(const std::filesystem::path& path);
 
  private:
   std::optional<std::filesystem::path> cache_location_{std::filesystem::temp_directory_path() / "swear_paper_cache"};

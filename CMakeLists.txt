@@ -10,6 +10,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_link_options(-fuse-ld=mold)
 include(cmake/conan.cmake)
 include(cmake/cpplint.cmake)
+include(cmake/gcov.cmake)
+include(cmake/ccache.cmake)
 
 set(_FLAGS -Wall -Wextra -Wpedantic -Werror -O0 -Wfatal-errors)
 
@@ -58,7 +60,7 @@ find_package(GTest REQUIRED)
 add_executable(swear_paper_test
     test/expected_reply.hpp
     test/earthporn_json_parse_test.cpp
-    #test/downloader_test.cpp
+    test/downloader_test.cpp
     test/environment_configuration_test.cpp
     )
 target_compile_options(swear_paper_test PRIVATE ${_FLAGS} -Wno-unused-but-set-variable)
@@ -69,7 +71,6 @@ add_style_check_target(core)
 option(COVERAGE "gcov html report" OFF)
 if(${COVERAGE})
     message(STATUS "Enabling coverage")
-    include(cmake/gcov.cmake)
     target_compile_options(core PRIVATE ${_FLAGS} --coverage)
     target_link_libraries(core PRIVATE gcov) 
     setup_target_for_coverage_gcovr_html(NAME core_coverage EXECUTABLE swear_paper_test)
