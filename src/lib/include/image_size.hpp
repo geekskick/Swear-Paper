@@ -1,5 +1,5 @@
-#ifndef IMAGE_SIZE_HPP
-#define IMAGE_SIZE_HPP
+#ifndef SRC_LIB_INCLUDE_IMAGE_SIZE_HPP_
+#define SRC_LIB_INCLUDE_IMAGE_SIZE_HPP_
 
 #include <fmt/format.h>
 
@@ -21,4 +21,4 @@ struct fmt::formatter<image_size<SizeType>> : fmt::formatter<double> {
   }
 };
 
-#endif
+#endif  // SRC_LIB_INCLUDE_IMAGE_SIZE_HPP_

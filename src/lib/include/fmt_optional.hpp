@@ -1,5 +1,5 @@
-#ifndef FMT_OPTIONAL_H
-#define FMT_OPTIONAL_H
+#ifndef SRC_LIB_INCLUDE_FMT_OPTIONAL_HPP_
+#define SRC_LIB_INCLUDE_FMT_OPTIONAL_HPP_
 
 #include <fmt/format.h>
 
@@ -34,4 +34,4 @@ struct fmt::formatter<std::filesystem::path> {
     return fmt::format_to(ctx.out(), "{}", path.c_str());
   }
 };
-#endif
+#endif  // SRC_LIB_INCLUDE_FMT_OPTIONAL_HPP_

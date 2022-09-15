@@ -26,12 +26,12 @@ std::enable_if_t<!std::is_convertible_v<std::string, T>, std::optional<T>> get_f
     spdlog::error("Unable to get {} from env: ", variable, e.what());
     return {};
   }
-};
+}
 
 template <typename T>
 std::enable_if_t<std::is_convertible_v<std::string, T>, std::optional<T>> get_from_env(const std::string& variable) {
   return get_string_from_env(variable);
-};
+}
 
 }  // namespace
 std::optional<std::filesystem::path> environment_configuration::cache_location() const {
@@ -43,7 +43,8 @@ std::optional<std::filesystem::path> environment_configuration::cache_location()
     spdlog::trace("Failed to get a value from the environment, so using default value {}", default_values.cache_location());
     return default_values.cache_location();
   }
-};
+}
+
 std::optional<std::filesystem::path> default_configuration::cache_location() const { return cache_location_; }
 default_configuration& default_configuration::with_cache_location(std::filesystem::path path) {
   cache_location_ = path;

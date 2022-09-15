@@ -1,7 +1,8 @@
-#ifndef EARTHPORN_HPP
-#define EARTHPORN_HPP
+#ifndef SRC_LIB_INCLUDE_EARTHPORN_HPP_
+#define SRC_LIB_INCLUDE_EARTHPORN_HPP_
 
 #include <nlohmann/json.hpp>
+#include <string>
 #include <string_view>
 
 #include "interfaces/reddit_interface.hpp"
@@ -18,4 +19,4 @@ class earthporn : public nlohmann::json, public reddit_interface {
   constexpr static std::string_view m_url{"https://www.reddit.com/r/earthporn/new.json?sort=new"};
 };
 
-#endif /* earthporn_hpp */
+#endif  // SRC_LIB_INCLUDE_EARTHPORN_HPP_

@@ -1,5 +1,5 @@
-#ifndef DOWNLOADER_HPP
-#define DOWNLOADER_HPP
+#ifndef SRC_LIB_INCLUDE_DOWNLOADER_HPP_
+#define SRC_LIB_INCLUDE_DOWNLOADER_HPP_
 
 #include <curl/curl.h>
 #include <spdlog/spdlog.h>
@@ -25,4 +25,4 @@ class downloader {
   void check_rc(const CURLcode &rc, const std::string &msg) const;
 };
 
-#endif /* downloader_hpp */
+#endif  // SRC_LIB_INCLUDE_DOWNLOADER_HPP_

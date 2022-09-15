@@ -1,5 +1,5 @@
-#ifndef ENV_CONFIG_HPP
-#define ENV_CONFIG_HPP
+#ifndef SRC_LIB_INCLUDE_ENVIRONMENT_CONFIGURATION_HPP_
+#define SRC_LIB_INCLUDE_ENVIRONMENT_CONFIGURATION_HPP_
 #include <string_view>
 
 #include "interfaces/configuration_interface.hpp"
@@ -19,11 +19,11 @@ class environment_configuration : public configuration_interface {
     constexpr static std::string_view cache_location{"SWEAR_PAPER_CACHE"};
   };
 
-  environment_configuration(const configuration_interface& default_values) : default_values{default_values} {}
+  explicit environment_configuration(const configuration_interface& default_values) : default_values{default_values} {}
   [[nodiscard]] std::optional<std::filesystem::path> cache_location() const override;
 
  private:
   const configuration_interface& default_values;
 };
 
-#endif
+#endif  // SRC_LIB_INCLUDE_ENVIRONMENT_CONFIGURATION_HPP_

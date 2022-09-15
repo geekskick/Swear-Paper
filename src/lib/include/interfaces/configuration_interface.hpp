@@ -1,5 +1,5 @@
-#ifndef CONFIG_INTERFACE_HPP
-#define CONFIG_INTERFACE_HPP
+#ifndef SRC_LIB_INCLUDE_INTERFACES_CONFIGURATION_INTERFACE_HPP_
+#define SRC_LIB_INCLUDE_INTERFACES_CONFIGURATION_INTERFACE_HPP_
 
 #include <filesystem>
 #include <optional>
@@ -8,4 +8,4 @@ struct configuration_interface {
   [[nodiscard]] virtual std::optional<std::filesystem::path> cache_location() const = 0;
 };
 
-#endif
+#endif  // SRC_LIB_INCLUDE_INTERFACES_CONFIGURATION_INTERFACE_HPP_

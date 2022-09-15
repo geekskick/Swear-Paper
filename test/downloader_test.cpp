@@ -81,7 +81,7 @@ struct HTTPOneShotServer {
     // Read from the connection
     constexpr auto buffer_size = 100;
     char buffer[buffer_size];
-    const auto bytes_read = read(connection, buffer, buffer_size);
+    read(connection, buffer, buffer_size);
 
     const auto http_message = fmt::format(
         "HTTP/{} {}\r\n"
@@ -89,7 +89,7 @@ struct HTTPOneShotServer {
         "{}",
         options.http_version, options.http_return_code, data.size(), data);
     // Send a message to the connection
-    const auto sent = send(connection, http_message.c_str(), http_message.size(), 0);
+    const auto sent = static_cast<size_t>(send(connection, http_message.c_str(), http_message.size(), 0));
     if (sent != http_message.size()) {
       fmt::print("Unable to send {}\n", http_message);
       return EXIT_FAILURE;

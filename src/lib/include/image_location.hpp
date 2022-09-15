@@ -1,5 +1,5 @@
-#ifndef IMAGE_LOC_HPP
-#define IMAGE_LOC_HPP
+#ifndef SRC_LIB_INCLUDE_IMAGE_LOCATION_HPP_
+#define SRC_LIB_INCLUDE_IMAGE_LOCATION_HPP_
 
 #include <fmt/format.h>
 
@@ -20,4 +20,4 @@ struct fmt::formatter<image_location> : fmt::formatter<int> {
   }
 };
 
-#endif
+#endif  // SRC_LIB_INCLUDE_IMAGE_LOCATION_HPP_

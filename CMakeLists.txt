@@ -9,8 +9,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_link_options(-fuse-ld=mold)
 include(cmake/conan.cmake)
+include(cmake/cpplint.cmake)
 
-set(_FLAGS -Wall -Wextra -Wpedantic -Werror -O0 -Wfatal-errors)
+set(_FLAGS -Wall -Wextra -Wpedantic -Werror -O0 -Wfatal-errors 
+    #-fprofile-arcs -ftest-coverage # for gcov
+    )
 
 find_package(fmt 9.1.0 REQUIRED)
 find_package(Boost 1.71.0 REQUIRED COMPONENTS program_options)
@@ -60,4 +63,7 @@ add_executable(swear_paper_test
     test/downloader_test.cpp
     test/environment_configuration_test.cpp
     )
+target_compile_options(swear_paper_test PRIVATE ${_FLAGS} -Wno-unused-but-set-variable)
 target_link_libraries(swear_paper_test PRIVATE core GTest::gtest_main GTest::gmock)
+
+add_style_check_target(core)

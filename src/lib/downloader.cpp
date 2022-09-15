@@ -66,7 +66,7 @@ std::optional<std::vector<std::string>> downloader::perform_vector(const std::st
   const auto reply_as_string{perform_string(url)};
   if (!reply_as_string) {
     return {};
-  };
+  }
 
   auto to = std::string{};
   auto stream = std::stringstream{*reply_as_string};

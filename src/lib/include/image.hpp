@@ -1,5 +1,5 @@
-#ifndef IMAGE_HPP
-#define IMAGE_HPP
+#ifndef SRC_LIB_INCLUDE_IMAGE_HPP_
+#define SRC_LIB_INCLUDE_IMAGE_HPP_
 
 #include <memory>                    // for unique_ptr
 #include <opencv2/core/mat.hpp>      // for Mat
@@ -13,7 +13,7 @@
 
 class image {
  public:
-  image(const std::vector<char> &from, const int thick = 1);
+  explicit image(const std::vector<char> &from, const int thick = 1);
 
   void put_text(const std::string &word);
   void save_to_file(const std::string &filename) const;
@@ -31,4 +31,4 @@ class image {
   image_size<int> text_size(const std::string &word) const;
 };
 
-#endif
+#endif  // SRC_LIB_INCLUDE_IMAGE_HPP_
