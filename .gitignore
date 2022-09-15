@@ -4,3 +4,4 @@ build/
 *.output
 .vscode/
 !results/*.jpg
+!.vscode/settings.json

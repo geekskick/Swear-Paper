@@ -11,9 +11,7 @@ add_link_options(-fuse-ld=mold)
 include(cmake/conan.cmake)
 include(cmake/cpplint.cmake)
 
-set(_FLAGS -Wall -Wextra -Wpedantic -Werror -O0 -Wfatal-errors 
-    #-fprofile-arcs -ftest-coverage # for gcov
-    )
+set(_FLAGS -Wall -Wextra -Wpedantic -Werror -O0 -Wfatal-errors)
 
 find_package(fmt 9.1.0 REQUIRED)
 find_package(Boost 1.71.0 REQUIRED COMPONENTS program_options)
@@ -60,10 +58,18 @@ find_package(GTest REQUIRED)
 add_executable(swear_paper_test
     test/expected_reply.hpp
     test/earthporn_json_parse_test.cpp
-    test/downloader_test.cpp
+    #test/downloader_test.cpp
     test/environment_configuration_test.cpp
     )
 target_compile_options(swear_paper_test PRIVATE ${_FLAGS} -Wno-unused-but-set-variable)
 target_link_libraries(swear_paper_test PRIVATE core GTest::gtest_main GTest::gmock)
 
 add_style_check_target(core)
+
+option(COVERAGE "gcov html report" OFF)
+if(${COVERAGE})
+    message(STATUS "Enabling coverage")
+    include(cmake/gcov.cmake)
+    target_compile_options(core PRIVATE ${_FLAGS} --coverage) 
+    setup_target_for_coverage_gcovr_html(NAME core_coverage EXECUTABLE swear_paper_test)
+endif()

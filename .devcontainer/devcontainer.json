@@ -7,7 +7,8 @@
         "xaver.clang-format",
         "oderwat.indent-rainbow",
         "vscodevim.vim",
-        "matepek.vscode-catch2-test-adapter"
+        "matepek.vscode-catch2-test-adapter",
+        "george-alisson.html-preview-vscode"
     ],
     "mounts": [
         "source=gcc-conan,target=/conan,type=volume"
