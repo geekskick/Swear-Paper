@@ -17,5 +17,5 @@ jobs:
       run: cmake -Bbuild -S.
     - name: build
       run: cmake --build build --target swear_paper_test
-   - name: build
+    - name: build
       run: cmake --build build --target test
