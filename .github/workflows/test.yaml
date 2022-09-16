@@ -11,14 +11,14 @@ on:
 
 jobs:
   build:
-    runs:
-      using: 'docker'
-      image: 'docker/Dockerfile'
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: create-dev-env
+      run: docker build -t dev-env docker/
     - name: configure
-      run: cmake -Bbuild -S.
+      run: docker --rm run -w `pwd` --mount type=bind,source=`pwd`,target=`pwd` dev-env cmake -Bbuild -S.
     - name: build
-      run: cmake --build build --target swear_paper_test
-    - name: build
-      run: cmake --build build --target test
+      run: docker --rm run -w `pwd` --mount type=bind,source=`pwd`,target=`pwd` dev-env cmake --build build --target swear_paper_test
+    - name: test
+      run: docker --rm run -w `pwd` --mount type=bind,source=`pwd`,target=`pwd` dev-env cmake --build build --target test
