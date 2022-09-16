@@ -1,0 +1,21 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+  build:
+    runs:
+      using: 'docker'
+      image: 'docker/Dockerfile'
+    steps:
+    - uses: actions/checkout@v3
+    - name: configure
+      run: cmake -Bbuild -S.
+    - name: build
+      run: cmake --build build --target swear_paper_test
+   - name: build
+      run: cmake --build build --target test
