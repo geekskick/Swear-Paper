@@ -56,5 +56,5 @@ boost/*:zlib = False
 
 
 [generators]
-cmake_find_package
-cmake_paths
+CMakeDeps
+CMakeToolchain
