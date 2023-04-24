@@ -59,6 +59,27 @@ TEST(CacheOrDownloadTest, GetFromCache) {
   ASSERT_TRUE(uut);
 }
 
+TEST(CacheOrDownloadTest, GetFromCacheManyWords) {
+  const auto file = TempFile{std::filesystem::temp_directory_path() / "GetFromCacheManyWords.txt", "help me"};
+  const auto url = "RUBBISH";
+  const auto downloader = ::testing::StrictMock<MockDownloader>{};
+  auto uut = CacheOrDownloadStrings{file.path, url, downloader};
+  const auto actual = uut.get();
+  ASSERT_EQ(actual.value(), std::vector<std::string>{"help me"});
+  ASSERT_TRUE(uut);
+}
+
+TEST(CacheOrDownloadTest, GetFromCacheManyLines) {
+  const auto file = TempFile{std::filesystem::temp_directory_path() / "GetFromCacheManyLines.txt", "help me\nholy"};
+  const auto url = "RUBBISH";
+  const auto downloader = ::testing::StrictMock<MockDownloader>{};
+  auto uut = CacheOrDownloadStrings{file.path, url, downloader};
+  const auto actual = uut.get();
+  const auto expected = std::vector<std::string>{"help me", "holy"};
+  ASSERT_EQ(actual.value(), expected);
+  ASSERT_TRUE(uut);
+}
+
 TEST(CacheOrDownloadTest, GetFromUrl) {
   const auto file = std::filesystem::temp_directory_path() / "THISPROBABLYDOESNTEXIST";
   std::filesystem::remove(file);

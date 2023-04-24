@@ -10,7 +10,7 @@
 //--------- EARTH PORN interface ----------
 class earthporn : public nlohmann::json, public reddit_interface {
  public:
-  std::string get_url_from_reply(const std::string &json_to_parse, const int idx) const override;
+  std::string get_url_from_reply(const std::string_view json_to_parse, const int idx) const override;
   std::string_view get_sub_reddit_url() const override;
 
  private:

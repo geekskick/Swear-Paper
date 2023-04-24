@@ -2,7 +2,7 @@
 
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
-std::string earthporn::get_url_from_reply(const std::string& json_to_parse, const int idx = 0) const {
+std::string earthporn::get_url_from_reply(const std::string_view json_to_parse, const int idx = 0) const {
   // this might throw an exception
   try {
     const auto json = nlohmann::json::parse(json_to_parse);

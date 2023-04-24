@@ -87,7 +87,7 @@ target_link_libraries(swear_paper_test PRIVATE core GTest::gtest_main GTest::gmo
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_options(swear_paper_test PRIVATE -Wno-unused-but-set-variable)
-    target_compile_options(swear_paper PRIVATE  -fsanitize=undefined  -fsanitize=address)
+    target_compile_options(swear_paper PRIVATE  -fsanitize=undefined  -fsanitize=address -Wno-unused-function)
     target_link_options(swear_paper PRIVATE -fsanitize=undefined  -fsanitize=address)
 endif()
 

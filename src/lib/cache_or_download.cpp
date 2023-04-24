@@ -20,7 +20,10 @@ void CacheOrDownloadStrings::create_cache(const std::vector<std::string>& to_wri
 std::vector<std::string> CacheOrDownloadStrings::read_vector_from_file(const std::filesystem::path& filename) {
   auto file = std::ifstream{filename};
   auto rc = std::vector<std::string>{};
-  std::copy(std::istream_iterator<std::string>(file), std::istream_iterator<std::string>(), std::back_inserter(rc));
+  auto line = std::string{};
+  while (std::getline(file, line)) {
+    rc.emplace_back(std::move(line));
+  }
   return rc;
 }
 

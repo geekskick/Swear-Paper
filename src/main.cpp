@@ -145,7 +145,7 @@ int main(int argc, const char* argv[]) {
       // remove it from the list so that it doesnt get selected again if it's
       // too big
       swearwords.erase(swearwords.begin() + n);
-      spdlog::debug("Word is:\t " + candidate);
+      spdlog::debug("Word is:\t {}", candidate);
 
     } while (!downloaded_image.word_fits(candidate) && !swearwords.empty());
 
