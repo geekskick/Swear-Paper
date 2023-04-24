@@ -16,9 +16,9 @@ class image {
  public:
   explicit image(const std::vector<char> &from, const int thick = 1);
 
-  void put_text(const std::string &word);
+  void put_text(const std::string_view &word);
   void save_to_file(const std::filesystem::path &filepath) const;
-  bool word_fits(const std::string &word) const;
+  bool word_fits(const std::string_view &word) const;
   image_size<int> size();
 
  private:
@@ -26,10 +26,10 @@ class image {
   int m_line_thickness;
   int m_font;
 
-  cv::Scalar text_colour(const std::string &word) const;
+  cv::Scalar text_colour(const std::string_view &word) const;
   int scale_factor() const;
-  image_location word_location(const std::string &word) const;
-  image_size<int> text_size(const std::string &word) const;
+  image_location word_location(const std::string_view &word) const;
+  image_size<int> text_size(const std::string_view &word) const;
 };
 
 #endif  // SRC_LIB_INCLUDE_IMAGE_HPP_

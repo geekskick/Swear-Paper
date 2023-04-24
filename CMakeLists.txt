@@ -72,6 +72,7 @@ add_executable(swear_paper src/main.cpp)
 target_link_libraries(swear_paper PRIVATE core)
 target_compile_options(swear_paper PRIVATE ${_FLAGS})
 
+
 find_package(GTest REQUIRED)
 add_executable(swear_paper_test
     test/expected_reply.hpp
@@ -80,8 +81,15 @@ add_executable(swear_paper_test
     test/environment_configuration_test.cpp
     test/cache_or_download_test.cpp
     )
-target_compile_options(swear_paper_test PRIVATE ${_FLAGS} -Wno-unused-but-set-variable)
+target_compile_options(swear_paper_test PRIVATE ${_FLAGS})
 target_link_libraries(swear_paper_test PRIVATE core GTest::gtest_main GTest::gmock)
+
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_options(swear_paper_test PRIVATE -Wno-unused-but-set-variable)
+    target_compile_options(swear_paper PRIVATE  -fsanitize=undefined  -fsanitize=address)
+    target_link_options(swear_paper PRIVATE -fsanitize=undefined  -fsanitize=address)
+endif()
 
 option(LINT "cpplint" OFF)
 if(${LINT})

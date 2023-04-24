@@ -10,9 +10,9 @@
 
 image::image(const std::vector<char> &from, const int thick) : m_image{cv::imdecode(from, -1)}, m_line_thickness{thick}, m_font{cv::FONT_HERSHEY_SCRIPT_COMPLEX} {}
 
-void image::put_text(const std::string &word) {
+void image::put_text(const std::string_view &word) {
   const auto word_loc = word_location(word);
-  cv::putText(m_image, word, cv::Point(word_loc.x, word_loc.y), m_font, scale_factor(), text_colour(word), m_line_thickness);
+  cv::putText(m_image, word.data(), cv::Point(word_loc.x, word_loc.y), m_font, scale_factor(), text_colour(word), m_line_thickness);
   spdlog::trace("Putting {} at location {}", word, word_loc);
 }
 
@@ -21,14 +21,14 @@ void image::save_to_file(const std::filesystem::path &filepath) const {
   spdlog::debug("Image save as {}", filepath);
 }
 
-bool image::word_fits(const std::string &word) const {
+bool image::word_fits(const std::string_view &word) const {
   const auto total_sz = image_size<int>{word_location(word).x + text_size(word).w, word_location(word).y + text_size(word).h};
   return total_sz.w < m_image.cols && total_sz.h < m_image.rows;
 }
 
 image_size<int> image::size() { return {m_image.cols, m_image.rows}; }
 
-cv::Scalar image::text_colour(const std::string &word) const {
+cv::Scalar image::text_colour(const std::string_view &word) const {
   // the location on the screen the text is going to go
   const auto word_loc = image_location{word_location(word)};
   const auto word_size = image_size<int>{text_size(word)};
@@ -71,12 +71,12 @@ int image::scale_factor() const {
   return (std::min(m_image.rows, m_image.cols) / 20.0) / std::max(text_height, text_width);
 }
 
-image_location image::word_location(const std::string &word) const {
+image_location image::word_location(const std::string_view &word) const {
   const auto sz{text_size(word)};
   return {(m_image.cols / 2) - (sz.w / 2), (m_image.rows / 2) - (sz.h / 2)};
 }
 
-image_size<int> image::text_size(const std::string &word) const {
-  auto sz = cv::getTextSize(word, m_font, scale_factor(), m_line_thickness, nullptr);
+image_size<int> image::text_size(const std::string_view &word) const {
+  auto sz = cv::getTextSize(word.data(), m_font, scale_factor(), m_line_thickness, nullptr);
   return {sz.width, sz.height};
 }
