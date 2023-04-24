@@ -16,9 +16,9 @@ void image::put_text(const std::string &word) {
   spdlog::trace("Putting {} at location {}", word, word_loc);
 }
 
-void image::save_to_file(const std::string &filename) const {
-  cv::imwrite(filename, m_image);
-  spdlog::debug("Image save as {}", filename);
+void image::save_to_file(const std::filesystem::path &filepath) const {
+  cv::imwrite(filepath.c_str(), m_image);
+  spdlog::debug("Image save as {}", filepath);
 }
 
 bool image::word_fits(const std::string &word) const {

@@ -1,7 +1,7 @@
 FROM gcc
-RUN apt update -y && apt-get install -y python3-pip gdb libgtk2.0-dev libva-dev libvdpau-dev clang-format libssl-dev zlib1g-dev file bsdmainutils ccache gcovr clang-tidy-13 && python3 -m pip install conan cpplint
-RUN conan profile detect --name default
-#RUN conan profile update settings.compiler.libcxx=libstdc++11 default
+RUN apt update -y && apt-get install -y python3-pip gdb libgtk2.0-dev libva-dev libvdpau-dev clang-format libssl-dev zlib1g-dev file bsdmainutils ccache gcovr clang-tidy-13 && python3 -m pip install "conan==1.59.0" cpplint
+RUN conan profile new default --detect
+RUN conan profile update settings.compiler.libcxx=libstdc++11 default
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 RUN update-alternatives --config python
 

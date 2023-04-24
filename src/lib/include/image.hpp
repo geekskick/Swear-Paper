@@ -1,6 +1,7 @@
 #ifndef SRC_LIB_INCLUDE_IMAGE_HPP_
 #define SRC_LIB_INCLUDE_IMAGE_HPP_
 
+#include <filesystem>
 #include <memory>                    // for unique_ptr
 #include <opencv2/core/mat.hpp>      // for Mat
 #include <opencv2/core/mat.inl.hpp>  // for Mat::~Mat
@@ -16,7 +17,7 @@ class image {
   explicit image(const std::vector<char> &from, const int thick = 1);
 
   void put_text(const std::string &word);
-  void save_to_file(const std::string &filename) const;
+  void save_to_file(const std::filesystem::path &filepath) const;
   bool word_fits(const std::string &word) const;
   image_size<int> size();
 
